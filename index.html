@@ -6,10 +6,46 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hub de Suivi de Projets</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'/></svg>">
+    <style id="theme-css">
+        /* ==========================================
+           STYLES DU MODE SOMBRE
+           Surcharge automatique des classes Tailwind
+           ========================================== */
+        [data-theme="dark"] body { background: #0f172a !important; color: #f8fafc !important; }
+        [data-theme="dark"] .bg-white, [data-theme="dark"] .bg-white\/80 { background-color: #1e293b !important; border-color: #334155 !important; }
+        [data-theme="dark"] .bg-slate-50, [data-theme="dark"] .bg-slate-100, [data-theme="dark"] .bg-slate-200 { background-color: #0f172a !important; border-color: #334155 !important; }
+        
+        [data-theme="dark"] .text-slate-900, [data-theme="dark"] .text-slate-800, [data-theme="dark"] .text-slate-700 { color: #f8fafc !important; }
+        [data-theme="dark"] .text-slate-600, [data-theme="dark"] .text-slate-500 { color: #94a3b8 !important; }
+        
+        [data-theme="dark"] .border-slate-100, [data-theme="dark"] .border-slate-200, [data-theme="dark"] .border-slate-300 { border-color: #334155 !important; }
+        [data-theme="dark"] .border-b-white { border-bottom-color: #1e293b !important; }
+        [data-theme="dark"] .divide-slate-100 > :not([hidden]) ~ :not([hidden]), [data-theme="dark"] .divide-slate-200 > :not([hidden]) ~ :not([hidden]) { border-color: #334155 !important; }
+        
+        [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { background-color: #0f172a !important; color: #f8fafc !important; border-color: #475569 !important; color-scheme: dark; }
+        
+        [data-theme="dark"] .bg-slate-800 { background-color: #334155 !important; color: #f8fafc !important; }
+        [data-theme="dark"] .hover\:bg-slate-900:hover { background-color: #475569 !important; }
+        
+        [data-theme="dark"] #themeToggle { background-color: #1e293b !important; color: #fbbf24 !important; border-color: #475569 !important; }
+        
+        [data-theme="dark"] th, [data-theme="dark"] td { border-color: #334155 !important; }
+        [data-theme="dark"] tr.hover\:bg-slate-50:hover, [data-theme="dark"] .hover\:bg-slate-50:hover { background-color: #334155 !important; }
+    </style>
 </head>
 <body class="bg-gradient-to-br from-slate-50 to-gray-200 text-slate-800 font-sans antialiased">
 
-    <div class="container mx-auto px-4 py-12 md:py-20">
+    <div class="container mx-auto px-4 py-12 md:py-20 relative">
+
+        <!-- Bouton Thème -->
+        <div class="absolute top-4 right-4 md:top-8 md:right-8">
+            <button id="themeToggle" class="bg-white/80 backdrop-blur-sm p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 border border-slate-200/50 text-slate-700 hover:text-blue-600" title="Basculer le thème clair / sombre">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </div>
 
         <header class="text-center mb-16">
             <div class="inline-block bg-white p-4 rounded-2xl shadow-lg mb-6">
@@ -110,5 +146,43 @@
 
     </div>
 
+    <script>
+        // ==========================================
+        // GESTION GLOBALE DU THÈME (Clair / Sombre)
+        // J'assure ici la persistance de l'expérience utilisateur vis-à-vis des préférences système ou des choix manuels.
+        // ==========================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const themeToggleBtn = document.getElementById('themeToggle');
+            const rootElement = document.documentElement;
+
+            if (themeToggleBtn) {
+                // Vérifier les préférences système et le localStorage
+                const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
+                const currentTheme = localStorage.getItem("theme");
+
+                // Initialisation au chargement
+                if (currentTheme === "dark" || (currentTheme === null && prefersDarkScheme.matches)) {
+                    rootElement.setAttribute("data-theme", "dark");
+                } else {
+                    rootElement.setAttribute("data-theme", "light");
+                }
+
+                // Bascule manuelle au clic
+                themeToggleBtn.addEventListener("click", () => {
+                    let theme = rootElement.getAttribute("data-theme");
+                    let newTheme = theme === "dark" ? "light" : "dark";
+                    
+                    rootElement.setAttribute("data-theme", newTheme);
+                    localStorage.setItem("theme", newTheme);
+
+                    // Notifier le module de la page courante pour qu'il redessine son graphique
+                    if (typeof window.onThemeChange === 'function') {
+                        window.onThemeChange();
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
