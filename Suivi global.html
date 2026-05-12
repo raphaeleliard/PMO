@@ -496,10 +496,10 @@
                     listeProjets = projetsSauvegardes.map(p => migrerProjetVersModeModerne(p));
                     
                     const idOngletMemoire = localStorage.getItem('livrables_active_project_id');
-                    if (idOngletMemoire && listeProjets.find(p => String(p.id) === String(idOngletMemoire))) {
+                    if (idOngletMemoire && (idOngletMemoire === 'GLOBAL' || listeProjets.find(p => String(p.id) === String(idOngletMemoire)))) {
                         idProjetActuel = idOngletMemoire;
                     } else {
-                        idProjetActuel = listeProjets[0].id;
+                        idProjetActuel = 'GLOBAL'; // Par défaut, on ouvre sur la vue globale
                     }
                 } else {
                     const ancienProjet = lireMemoireNavigateur('livrables_project_data', null);
@@ -532,7 +532,7 @@
         }
 
         function sauvegarderDansLeNavigateur() {
-            if (!idProjetActuel) return;
+            if (!idProjetActuel || idProjetActuel === 'GLOBAL') return;
             const index = listeProjets.findIndex(p => p.id === idProjetActuel);
             if(index !== -1) {
                 listeProjets[index] = { id: idProjetActuel, projectData: donneesProjet, team: membresEquipe, tasks: listeLivrables, timeEntries: historiquePointages };
@@ -546,6 +546,13 @@
             
             const fragment = document.createDocumentFragment();
             
+            const estGlobalActif = idProjetActuel === 'GLOBAL';
+            const btnGlobal = document.createElement('div');
+            btnGlobal.className = `px-4 py-2 text-sm font-bold rounded-t-lg transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap sticky left-0 z-20 ${estGlobalActif ? 'bg-purple-600 text-white border-purple-800 shadow-sm' : 'bg-purple-100 text-purple-700 border-transparent hover:bg-purple-200 cursor-pointer'}`;
+            if (!estGlobalActif) btnGlobal.addEventListener('click', () => changerDeProjet('GLOBAL'));
+            btnGlobal.innerHTML = `<span>🌍 Vue Globale</span>`;
+            fragment.appendChild(btnGlobal);
+
             listeProjets.forEach(projet => {
                 const estActif = projet.id === idProjetActuel;
                 const classeBase = "px-4 py-2 text-sm font-medium rounded-t-lg transition-colors border-b-2 flex items-center gap-2 whitespace-nowrap";
@@ -611,17 +618,79 @@
 
         function chargerProjetActif() {
             try {
-                const projetActif = listeProjets.find(p => p.id === idProjetActuel);
-                if(!projetActif) return;
+                const isGlobal = idProjetActuel === 'GLOBAL';
                 
-                donneesProjet = projetActif.projectData || {name: '', start: '', end: '', encadrement: 0, eotp: ''}; 
-                if (!donneesProjet.niveauxAvancement) {
-                    donneesProjet.niveauxAvancement = { "Non lancé": 0, "Cadrage": 0, "DB": 10, "Etude": 25, "Rédaction": 55, "Relecture": 80, "Validation": 90, "Déposée": 100 };
+                if (isGlobal) {
+                    donneesProjet = { name: "🌍 Vue Globale (Tous les projets)", start: "", end: "", encadrement: 0, eotp: "Vue consolidée du portefeuille de projets." };
+                    let minDate = null, maxDate = null;
+                    let mergedTeam = [], memberIdMap = {}, mergedTasks = [], mergedEntries = [];
+
+                    listeProjets.forEach(proj => {
+                        const pData = proj.projectData || {};
+                        if (pData.start) { let d = new Date(pData.start); if (!minDate || d < minDate) minDate = d; }
+                        if (pData.end) { let d = new Date(pData.end); if (!maxDate || d > maxDate) maxDate = d; }
+
+                        (proj.team || []).forEach(m => {
+                            if (!m) return;
+                            let existing = mergedTeam.find(em => em.name.toLowerCase() === m.name.toLowerCase());
+                            if (!existing) { existing = { ...m, id: m.id }; mergedTeam.push(existing); }
+                            memberIdMap[m.id] = existing.id;
+                        });
+
+                        const projName = pData.name || "Projet";
+                        const projTasks = proj.tasks || [];
+                        projTasks.forEach(t => {
+                            if (!t) return;
+                            mergedTasks.push({ ...t, wp: `[${projName}] ${t.wp || 'Sans cat'}` });
+                        });
+
+                        (proj.timeEntries || []).forEach(pointage => {
+                            if (!pointage) return;
+                            const estRepartGlobal = pointage.taskId === ID_REPARTITION_UNIFORME;
+                            const estRepartCat = String(pointage.taskId).startsWith("REP_CAT_");
+                            
+                            if (estRepartGlobal || estRepartCat) {
+                                let cibles = projTasks.filter(t => t);
+                                if (estRepartCat) {
+                                    const catCible = pointage.taskId.replace("REP_CAT_", "");
+                                    cibles = cibles.filter(t => t.wp === catCible);
+                                }
+                                if (cibles.length === 0) return;
+
+                                const totalHeuresPrevues = cibles.reduce((sum, t) => sum + (parseFloat(t.hours) || 0), 0);
+                                cibles.forEach(tacheReelle => {
+                                    let partHeures = 0;
+                                    if (totalHeuresPrevues > 0) partHeures = pointage.hours * ((parseFloat(tacheReelle.hours) || 0) / totalHeuresPrevues);
+                                    else partHeures = pointage.hours / cibles.length;
+                                    
+                                    if (partHeures > 0) mergedEntries.push({ id: genererIDUnique(), memberId: memberIdMap[pointage.memberId] || pointage.memberId, taskId: tacheReelle.id, week: pointage.week, hours: partHeures, comment: `${pointage.comment ? pointage.comment + ' ' : ''}(Rép.)` });
+                                });
+                            } else {
+                                mergedEntries.push({ ...pointage, memberId: memberIdMap[pointage.memberId] || pointage.memberId });
+                            }
+                        });
+                    });
+
+                    if (minDate) donneesProjet.start = minDate.toISOString().split('T')[0];
+                    if (maxDate) donneesProjet.end = maxDate.toISOString().split('T')[0];
+
+                    membresEquipe = mergedTeam;
+                    listeLivrables = mergedTasks;
+                    historiquePointages = mergedEntries;
+                    correspondanceStatutAvancement = { "Non lancé": 0, "Cadrage": 0, "DB": 10, "Etude": 25, "Rédaction": 55, "Relecture": 80, "Validation": 90, "Déposée": 100 };
+                } else {
+                    const projetActif = listeProjets.find(p => p.id === idProjetActuel);
+                    if(!projetActif) return;
+                    
+                    donneesProjet = projetActif.projectData || {name: '', start: '', end: '', encadrement: 0, eotp: ''}; 
+                    if (!donneesProjet.niveauxAvancement) {
+                        donneesProjet.niveauxAvancement = { "Non lancé": 0, "Cadrage": 0, "DB": 10, "Etude": 25, "Rédaction": 55, "Relecture": 80, "Validation": 90, "Déposée": 100 };
+                    }
+                    correspondanceStatutAvancement = donneesProjet.niveauxAvancement;
+                    membresEquipe = (projetActif.team || []).filter(e => e !== null); 
+                    listeLivrables = (projetActif.tasks || []).filter(e => e !== null); 
+                    historiquePointages = (projetActif.timeEntries || []).filter(e => e !== null);
                 }
-                correspondanceStatutAvancement = donneesProjet.niveauxAvancement;
-                membresEquipe = (projetActif.team || []).filter(e => e !== null); 
-                listeLivrables = (projetActif.tasks || []).filter(e => e !== null); 
-                historiquePointages = (projetActif.timeEntries || []).filter(e => e !== null);
 
                 const inputNom = document.getElementById('project-name'); 
                 const inputDebut = document.getElementById('project-start'); 
@@ -629,11 +698,25 @@
                 const inputEncadrement = document.getElementById('project-encadrement');
                 const inputEotp = document.getElementById('project-eotp');
                 
-                if(inputNom) inputNom.value = donneesProjet.name || ''; 
-                if(inputDebut) inputDebut.value = donneesProjet.start || ''; 
-                if(inputFin) inputFin.value = donneesProjet.end || '';
-                if(inputEncadrement) inputEncadrement.value = donneesProjet.encadrement || 0;
-                if(inputEotp) inputEotp.value = donneesProjet.eotp || '';
+                if(inputNom) { inputNom.value = donneesProjet.name || ''; inputNom.disabled = isGlobal; }
+                if(inputDebut) { inputDebut.value = donneesProjet.start || ''; inputDebut.disabled = isGlobal; }
+                if(inputFin) { inputFin.value = donneesProjet.end || ''; inputFin.disabled = isGlobal; }
+                if(inputEncadrement) { inputEncadrement.value = donneesProjet.encadrement || 0; inputEncadrement.disabled = isGlobal; }
+                if(inputEotp) { inputEotp.value = donneesProjet.eotp || ''; inputEotp.disabled = isGlobal; }
+
+                // Gestion de l'affichage des formulaires en mode Global (Lecture seule)
+                const toggleVis = (id, show) => { const el = document.getElementById(id); if(el) el.style.display = show ? '' : 'none'; };
+                toggleVis('task-form', !isGlobal);
+                toggleVis('team-form', !isGlobal);
+                toggleVis('time-entry-form', !isGlobal);
+                
+                const btnImportAdi = document.getElementById('import-excel-adi');
+                if (btnImportAdi && btnImportAdi.parentElement) btnImportAdi.parentElement.style.display = isGlobal ? 'none' : '';
+                const btnImportPointage = document.getElementById('import-excel-pointage');
+                if (btnImportPointage && btnImportPointage.parentElement) btnImportPointage.parentElement.style.display = isGlobal ? 'none' : '';
+
+                const divNiveaux = document.getElementById('avancement-config-list');
+                if (divNiveaux) { divNiveaux.style.opacity = isGlobal ? '0.6' : '1'; divNiveaux.style.pointerEvents = isGlobal ? 'none' : 'auto'; }
 
                 mettreAJourListesDeroulantes(); initialiserDatesLivrable(); afficherEquipe(); afficherLivrables(); afficherPointages(); afficherNiveauxAvancement();
                 
@@ -1198,9 +1281,13 @@
                 const badge = document.createElement('div'); badge.className = 'flex items-center gap-2 bg-slate-100 border border-slate-200 rounded-full px-4 py-1.5 text-sm text-slate-700';
                 const nomE = document.createElement('span'); nomE.className = 'font-semibold'; nomE.textContent = m.name;
                 const roleE = document.createElement('span'); roleE.className = 'text-slate-400 text-xs'; roleE.textContent = m.role;
-                const btnSup = document.createElement('button'); btnSup.className = 'ml-1 text-slate-400 hover:text-red-500 font-bold outline-none'; btnSup.innerHTML = '&times;';
-                btnSup.onclick = () => supprimerMembreEquipe(m.id);
-                badge.append(nomE, roleE, btnSup);
+                if (idProjetActuel === 'GLOBAL') {
+                    badge.append(nomE, roleE);
+                } else {
+                    const btnSup = document.createElement('button'); btnSup.className = 'ml-1 text-slate-400 hover:text-red-500 font-bold outline-none'; btnSup.innerHTML = '&times;';
+                    btnSup.onclick = () => supprimerMembreEquipe(m.id);
+                    badge.append(nomE, roleE, btnSup);
+                }
                 fragment.appendChild(badge);
             });
             conteneurListe.innerHTML = ''; conteneurListe.appendChild(fragment);
@@ -1307,10 +1394,16 @@
                 tdHeures.innerHTML = texteHeures; 
                 
                 const tdAvancement = creerElementHTML('td', 'px-4 py-3 align-middle');
-                tdAvancement.innerHTML = `<div class="flex gap-1 mb-1"><select onchange="changerModeAvancement('${tache.id}', this.value)" class="w-1/2 text-xs border rounded px-1 bg-slate-50 text-slate-500 outline-none"><option value="statut" ${methodeDCalcul === 'statut' ? 'selected' : ''}>Niveaux</option><option value="manuel" ${methodeDCalcul === 'manuel' ? 'selected' : ''}>Manuel (%)</option></select><div class="w-1/2">${selecteurPhysique}</div></div><div class="w-full bg-slate-200 rounded-full h-1.5"><div class="${colorisDeBarre} h-1.5 rounded-full transition-all" style="width: ${tauxProgressionFinal}%"></div></div>`;
                 
                 const tdActions = creerElementHTML('td', 'px-4 py-3 align-middle text-center whitespace-nowrap');
-                tdActions.innerHTML = `<button onclick="preparerEditionLivrable('${tache.id}')" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button><button onclick="supprimerLivrable('${tache.id}')" class="text-red-400 hover:text-red-600">🗑️</button>`;
+                
+                if (idProjetActuel === 'GLOBAL') {
+                    tdAvancement.innerHTML = `<div class="w-full bg-slate-200 rounded-full h-1.5 mt-2"><div class="${colorisDeBarre} h-1.5 rounded-full transition-all" style="width: ${tauxProgressionFinal}%"></div></div><div class="text-xs text-center mt-1 text-slate-500">${tauxProgressionFinal}%</div>`;
+                    tdActions.innerHTML = `<span class="text-slate-400 text-xs italic">Lecture seule</span>`;
+                } else {
+                    tdAvancement.innerHTML = `<div class="flex gap-1 mb-1"><select onchange="changerModeAvancement('${tache.id}', this.value)" class="w-1/2 text-xs border rounded px-1 bg-slate-50 text-slate-500 outline-none"><option value="statut" ${methodeDCalcul === 'statut' ? 'selected' : ''}>Niveaux</option><option value="manuel" ${methodeDCalcul === 'manuel' ? 'selected' : ''}>Manuel (%)</option></select><div class="w-1/2">${selecteurPhysique}</div></div><div class="w-full bg-slate-200 rounded-full h-1.5"><div class="${colorisDeBarre} h-1.5 rounded-full transition-all" style="width: ${tauxProgressionFinal}%"></div></div>`;
+                    tdActions.innerHTML = `<button onclick="preparerEditionLivrable('${tache.id}')" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button><button onclick="supprimerLivrable('${tache.id}')" class="text-red-400 hover:text-red-600">🗑️</button>`;
+                }
                 
                 tr.append(tdCat, tdCat2, tdNom, tdDates, tdHeures, tdAvancement, tdActions);
                 fragment.appendChild(tr);
@@ -1408,7 +1501,11 @@
                 const tdComment = document.createElement('td'); tdComment.className = 'px-6 py-3 text-slate-500 text-sm whitespace-normal max-w-[200px] break-words'; tdComment.textContent = ligneDeDonnee.comment || '';
 
                 const tdAct = document.createElement('td'); tdAct.className = 'px-6 py-3 text-center whitespace-nowrap';
-                tdAct.innerHTML = `<button onclick="preparerEditionPointage('${ligneDeDonnee.id}')" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button><button onclick="supprimerPointage('${ligneDeDonnee.id}')" class="text-red-400 hover:text-red-600">🗑️</button>`;
+                if (idProjetActuel === 'GLOBAL') {
+                    tdAct.innerHTML = `<span class="text-slate-400 text-xs italic">Lecture seule</span>`;
+                } else {
+                    tdAct.innerHTML = `<button onclick="preparerEditionPointage('${ligneDeDonnee.id}')" class="text-blue-500 hover:text-blue-700 mr-2">✏️</button><button onclick="supprimerPointage('${ligneDeDonnee.id}')" class="text-red-400 hover:text-red-600">🗑️</button>`;
+                }
 
                 tr.append(tdSem, tdMemb, tdTask, tdHeures, tdComment, tdAct);
                 fragment.appendChild(tr);
@@ -2192,15 +2289,7 @@
                 const nAuteur = chercherNomMembreParId(lVf.memberId).replace(/;/g, ',');
                 
                 // 3. Nom de la tâche (UNIQUEMENT le nom, sans les catégories)
-                let nomTacheSeul = "Inconnu";
-                if (lVf.taskId === ID_HEURES_NON_ATTRIBUEES) nomTacheSeul = "❓ Heures non-attribuées";
-                else if (lVf.taskId === ID_REPARTITION_UNIFORME) nomTacheSeul = "🔄 Répartition uniforme";
-                else {
-                    const tObj = listeLivrables.find(t => t.id === lVf.taskId);
-                    if (tObj) nomTacheSeul = tObj.name;
-                    else nomTacheSeul = "Tâche supprimée";
-                }
-                nomTacheSeul = nomTacheSeul.replace(/;/g, ',');
+                const nomTacheSeul = chercherNomTacheParId(lVf.taskId).replace(/;/g, ',');
 
                 // 4. Ajout de la ligne dans le fichier CSV
                 csv += `${dateDebutStr};${dateFinStr};${nAuteur};${nomTacheSeul};${formatExcelNum(lVf.hours)};${(lVf.comment || '').replace(/;/g, ',')}\n`; 
