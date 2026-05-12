@@ -1,0 +1,85 @@
+<!-- © ELIARD Raphaël -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hub de Suivi de Projets</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 text-slate-800 font-sans antialiased">
+
+    <div class="container mx-auto px-4 py-8 md:py-16">
+
+        <header class="text-center mb-12">
+            <h1 class="text-5xl font-bold text-slate-900 mb-4">Outil de Suivi de Projets</h1>
+            <p class="text-xl text-slate-600">Un hub central pour toutes les versions de l'outil de suivi des ADI.</p>
+        </header>
+
+        <main>
+            <section id="about" class="bg-white p-8 rounded-xl shadow-md mb-12 max-w-4xl mx-auto">
+                <h2 class="text-3xl font-semibold text-slate-800 mb-4">À propos de cet outil</h2>
+                <div class="space-y-4 text-slate-700 leading-relaxed">
+                    <p>
+                        Cet outil a été conçu comme une solution légère, autonome et puissante pour le <strong>suivi de projets</strong>, initialement pour la gestion des "Analyses de Données et Indicateurs" (ADI). Il fonctionne entièrement dans le navigateur à partir d'un unique fichier HTML, sans nécessiter de serveur ou de base de données externe.
+                    </p>
+                    <p>
+                        L'objectif principal est de fournir aux responsables d'études et aux chefs de service un moyen simple de :
+                    </p>
+                    <ul class="list-disc list-inside pl-4 space-y-2">
+                        <li>Gérer des <strong>listes de livrables</strong> avec des budgets en heures et des plannings.</li>
+                        <li>Saisir et suivre les <strong>pointages hebdomadaires</strong> de l'équipe.</li>
+                        <li>Visualiser le <strong>plan de charge</strong> et la consommation des heures.</li>
+                        <li>Analyser les performances grâce aux <strong>indicateurs de la valeur acquise (EVM)</strong>.</li>
+                        <li>Exporter toutes les données aux formats JSON (sauvegarde) et CSV (rapports).</li>
+                    </ul>
+                    <p>
+                        Créé pour répondre à un besoin de flexibilité et d'autonomie, ce projet a évolué pour intégrer des optimisations de performance et des fonctionnalités avancées comme la vue multi-projets pour les managers.
+                    </p>
+                </div>
+            </section>
+
+            <section id="versions">
+                <h2 class="text-3xl font-semibold text-slate-800 mb-6 text-center">Accéder aux différentes versions</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    
+                    <!-- Tuile Version de Base -->
+                    <a href="./Suivi.html" class="block bg-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <h3 class="text-xl font-bold text-blue-600 mb-2">Version de Base (v1.23)</h3>
+                        <p class="text-slate-600 text-sm">
+                            La version originale de l'outil. Fonctionnelle et stable, elle pose les bases du suivi par projet unique.
+                        </p>
+                    </a>
+
+                    <!-- Tuile Version Optimisée -->
+                    <a href="./Suivi optim.html" class="block bg-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <h3 class="text-xl font-bold text-emerald-600 mb-2">Version Optimisée (v1.31)</h3>
+                        <p class="text-slate-600 text-sm">
+                            Une version améliorée avec des optimisations de performance majeures (rendu des tableaux, graphiques) pour une expérience plus fluide avec de grands volumes de données.
+                        </p>
+                    </a>
+
+                    <!-- Tuile Version Globale -->
+                    <a href="./Suivi global.html" class="block bg-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                        <h3 class="text-xl font-bold text-purple-600 mb-2">Version Chef de Service</h3>
+                        <p class="text-slate-600 text-sm">
+                            La version la plus complète, incluant un onglet "Vue Globale" qui agrège les données de tous les projets ouverts. Idéale pour le pilotage et les rapports consolidés.
+                        </p>
+                    </a>
+
+                </div>
+            </section>
+        </main>
+
+        <footer class="mt-16 text-center text-sm text-slate-500 border-t border-slate-200 pt-8">
+            <h3 class="text-lg font-semibold text-slate-700 mb-2">Contact</h3>
+            <p>Pour toute question, suggestion ou rapport de bug, n'hésitez pas à me contacter.</p>
+            <p class="mt-2">
+                <a href="mailto:raphael.eliard@gmail.com" class="text-blue-600 hover:text-blue-800 hover:underline transition-colors font-medium">raphael.eliard@gmail.com</a>
+            </p>
+        </footer>
+
+    </div>
+
+</body>
+</html>
