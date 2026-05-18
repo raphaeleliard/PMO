@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi des ADI</title>
+    <title>Suivi de Projets</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'/></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -38,7 +38,9 @@
         <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div class="w-full md:w-2/3 flex items-center gap-4">
                 <div class="w-16 h-16 shrink-0 bg-white border border-slate-200 rounded-xl flex items-center justify-center overflow-hidden shadow-sm">
-                    <img src="#" alt="Logo" class="w-full h-full object-contain p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                 </div>
                 <div class="flex-1">
                     <input type="text" id="project-name" placeholder="Saisir le nom du projet..." 
@@ -65,7 +67,7 @@
         </header>
 
         <nav class="flex gap-2 mb-8 border-b border-slate-200 pb-px overflow-x-auto">
-            <button id="tab-btn-projet" class="whitespace-nowrap px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors bg-white text-blue-600 border border-slate-200 border-b-white -mb-px">ADI</button>
+            <button id="tab-btn-projet" class="whitespace-nowrap px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors bg-white text-blue-600 border border-slate-200 border-b-white -mb-px">Tâches</button>
             <button id="tab-btn-pointage" class="whitespace-nowrap px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-transparent">Pointage Hebdo</button>
             <button id="tab-btn-charge" class="whitespace-nowrap px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-transparent">Plan de charge</button>
             <button id="tab-btn-indicateurs" class="whitespace-nowrap px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-transparent">Indicateurs</button>
@@ -75,19 +77,19 @@
         <div id="view-projet" class="block max-w-6xl">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8">
                 <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-                    <h2 class="text-lg font-semibold text-slate-700" id="task-form-title">Ajouter un livrable</h2>
+                    <h2 class="text-lg font-semibold text-slate-700" id="task-form-title">Ajouter une tâche</h2>
                     
                     <div class="flex items-center gap-4">
-                        <button onclick="exporterADIExcel()" title="Exporter la liste des livrables (CSV)" class="bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1.5 rounded text-sm font-medium transition border border-blue-200 flex items-center gap-2 shadow-sm">
+                        <button onclick="exporterTachesExcel()" title="Exporter la liste des tâches (CSV)" class="bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1.5 rounded text-sm font-medium transition border border-blue-200 flex items-center gap-2 shadow-sm">
                             <span>📤 Exporter Excel</span>
                         </button>
                         <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded border border-slate-200">
-                            <label class="text-sm font-medium text-slate-600" title="Ce % s'appliquera à titre indicatif sur les heures des tâches">Taux d'encadrement (%) :</label>
+                            <label class="text-sm font-medium text-slate-600" title="Ce % s'appliquera à titre indicatif sur les heures des tâches">Taux d'encadrement (%) (optionnel) :</label>
                             <input type="number" id="project-encadrement" min="0" max="100" step="0.5" placeholder="Ex: 5" class="w-16 px-1 py-0.5 text-center border border-slate-300 rounded outline-none text-sm focus:border-blue-500">
                         </div>
                         <label title="Importer depuis Excel" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-3 py-1.5 rounded text-sm font-medium transition border border-emerald-200 flex items-center gap-2 cursor-pointer shadow-sm">
                             <span>📥 Importer Excel</span>
-                            <input type="file" id="import-excel-adi" class="hidden" accept=".xlsx, .xls, .csv" onchange="traiterUploadExcel(event, 'ADI')">
+                            <input type="file" id="import-excel-adi" class="hidden" accept=".xlsx, .xls, .csv" onchange="traiterUploadExcel(event, 'TACHES')">
                         </label>
                     </div>
                 </div>
@@ -104,7 +106,7 @@
                         <input type="text" id="wp2" placeholder="Optionnelle" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition text-sm">
                     </div>
                     <div class="flex-1 min-w-[150px]">
-                        <label class="block text-sm font-medium text-slate-600 mb-1" for="name">Nom du livrable</label>
+                        <label class="block text-sm font-medium text-slate-600 mb-1" for="name">Nom de la tâche</label>
                         <input type="text" id="name" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition text-sm">
                     </div>
                     <div class="w-32">
@@ -126,7 +128,7 @@
                     
                     <div class="w-full flex items-center gap-2 mt-1">
                         <input type="checkbox" id="disable-encadrement" class="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500">
-                        <label for="disable-encadrement" class="text-sm font-medium text-slate-500 cursor-pointer">Désactiver le calcul d'encadrement indicatif pour ce livrable spécifique</label>
+                        <label for="disable-encadrement" class="text-sm font-medium text-slate-500 cursor-pointer">Désactiver le calcul d'encadrement indicatif pour cette tâche spécifique</label>
                     </div>
                 </form>
 
@@ -147,7 +149,7 @@
                             <tr class="bg-slate-50 border-b border-slate-200 text-sm text-slate-600 uppercase tracking-wider">
                                 <th class="px-4 py-3 font-medium">Catégorie</th>
                                 <th class="px-4 py-3 font-medium">Catégorie 2</th>
-                                <th class="px-4 py-3 font-medium">Livrable</th>
+                                <th class="px-4 py-3 font-medium">Tâche</th>
                                 <th class="px-4 py-3 font-medium whitespace-nowrap">Dates</th>
                                 <th class="px-4 py-3 font-medium text-right">Heures</th>
                                 <th class="px-4 py-3 font-medium w-64">Avancement</th>
@@ -180,8 +182,8 @@
         <div id="view-pointage" class="hidden max-w-5xl">
             
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-4">
-                <h2 class="text-lg font-semibold mb-2 text-slate-700">Code EOTP / Informations générales</h2>
-                <textarea id="project-eotp" rows="2" placeholder="Exemple : Code EOTP : 12345-ABC&#10;Informations de facturation..." class="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition text-sm text-slate-700"></textarea>
+                <h2 class="text-lg font-semibold mb-2 text-slate-700">Zone de commentaire libre / Informations générales</h2>
+                <textarea id="project-eotp" rows="2" placeholder="Exemple : Informations de facturation, liens utiles..." class="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition text-sm text-slate-700"></textarea>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8">
@@ -193,7 +195,7 @@
                         <select id="entry-member" required class="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none bg-white"></select>
                     </div>
                     <div class="flex-[2] min-w-[200px]">
-                        <label class="block text-sm font-medium text-slate-600 mb-1" for="entry-task">Livrable concerné</label>
+                        <label class="block text-sm font-medium text-slate-600 mb-1" for="entry-task">Tâche concernée</label>
                         <select id="entry-task" required class="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none bg-white"></select>
                     </div>
                     <div class="w-36">
@@ -233,7 +235,7 @@
                         <tr class="bg-slate-50 border-b border-slate-200 text-sm text-slate-600 uppercase tracking-wider">
                             <th class="px-6 py-3 font-medium">Semaine</th>
                             <th class="px-6 py-3 font-medium">Membre</th>
-                            <th class="px-6 py-3 font-medium whitespace-normal">Livrable</th>
+                            <th class="px-6 py-3 font-medium whitespace-normal">Tâche</th>
                             <th class="px-6 py-3 font-medium text-right">Heures</th>
                             <th class="px-6 py-3 font-medium whitespace-normal">Commentaire</th>
                             <th class="px-6 py-3 font-medium text-center">Actions</th>
@@ -260,7 +262,7 @@
                         <select id="charge-member-filter" onchange="afficherPlanDeCharge()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-slate-50 shadow-sm text-sm font-medium text-slate-700"></select>
                     </div>
                     <div class="flex-1 min-w-[150px]">
-                        <label class="block text-sm font-semibold text-slate-600 mb-1">Livrable</label>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1">Tâche</label>
                         <select id="charge-task-filter" onchange="afficherPlanDeCharge()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-slate-50 shadow-sm text-sm font-medium text-slate-700"></select>
                     </div>
                 </div>
@@ -293,7 +295,7 @@
                     <table class="w-full text-left border-collapse whitespace-nowrap">
                         <thead>
                             <tr class="bg-slate-100 border-b border-slate-200 text-xs text-slate-600 uppercase tracking-wider">
-                                <th class="px-4 py-3 font-semibold">Tâche / Livrable</th>
+                                <th class="px-4 py-3 font-semibold">Tâche</th>
                                 <th class="px-4 py-3 font-semibold w-32" title="Valeur Planifiée : Budget censé être dépensé à cette date.">Prévu (PV)</th>
                                 <th class="px-4 py-3 font-semibold w-32" title="Coût Réel : Total des heures pointées.">Consommé (AC)</th>
                                 <th class="px-4 py-3 font-semibold w-32" title="Valeur Acquise : Budget initial × Avancement physique (%).">Réel (EV)</th>
@@ -980,11 +982,11 @@
             conteneurChamps.innerHTML = '';
 
             let champsRequis = [];
-            if (contexteImportActuel === 'ADI') {
+            if (contexteImportActuel === 'TACHES') {
                 champsRequis = [
                     { id: 'col_wp', label: 'Catégorie 1 (Obligatoire)', motsCles: ['catégorie', 'categorie', 'wp', 'projet'] },
                     { id: 'col_wp2', label: 'Catégorie 2 (Optionnelle)', motsCles: ['catégorie 2', 'sous-catégorie', 'lot', 'sous-projet'] },
-                    { id: 'col_name', label: 'Nom du Livrable / Tâche', motsCles: ['livrable', 'nom', 'tâche', 'tache'] },
+                    { id: 'col_name', label: 'Nom de la Tâche', motsCles: ['livrable', 'nom', 'tâche', 'tache'] },
                     { id: 'col_start', label: 'Date de Début', motsCles: ['début', 'debut', 'start'] },
                     { id: 'col_end', label: 'Date de Fin', motsCles: ['fin', 'end'] },
                     { id: 'col_hours', label: 'Heures Prévues (Budget)', motsCles: ['heures', 'budget', 'h'] }
@@ -993,7 +995,7 @@
                 champsRequis = [
                     { id: 'col_member', label: 'Membre de l\'équipe', motsCles: ['membre', 'nom', 'personne'] },
                     { id: 'col_cat', label: 'Catégorie (Optionnel)', motsCles: ['catégorie', 'categorie', 'wp'] },
-                    { id: 'col_task', label: 'Livrable / Tâche ciblée', motsCles: ['livrable', 'tâche', 'tache'] },
+                    { id: 'col_task', label: 'Tâche ciblée', motsCles: ['livrable', 'tâche', 'tache'] },
                     { id: 'col_week', label: 'Date ou Semaine', motsCles: ['semaine', 'week', 'date', 'jour'] },
                     { id: 'col_hours', label: 'Heures Réalisées', motsCles: ['heures', 'temps', 'h', 'hours'] },
                     { id: 'col_comment', label: 'Commentaire (Optionnel)', motsCles: ['commentaire', 'comment', 'remarque', 'info'] }
@@ -1038,7 +1040,7 @@
 
                     let compteurAjouts = 0;
 
-                    if (contexteImportActuel === 'ADI') {
+                    if (contexteImportActuel === 'TACHES') {
                         const mWp = document.getElementById('map_col_wp').value;
                         const mWp2 = document.getElementById('map_col_wp2').value;
                         const mName = document.getElementById('map_col_name').value;
@@ -1323,7 +1325,7 @@
         window.changerValeurAvancement = function(id, val) { const t = listeLivrables.find(x => x.id === id); if(t) t.manualProgress = parseFloat(val); signalerModification(); afficherLivrables(); };
         
         window.supprimerLivrable = function(idCible) { 
-            if (confirm("Supprimer ce livrable ? Les pointages associés seront également supprimés.")) { 
+            if (confirm("Supprimer cette tâche ? Les pointages associés seront également supprimés.")) { 
                 listeLivrables = listeLivrables.filter(t => t.id !== idCible);
                 historiquePointages = historiquePointages.filter(p => p.taskId !== idCible);
                 signalerModification(); mettreAJourListesDeroulantes(); afficherLivrables(); afficherPointages();
@@ -1343,7 +1345,7 @@
             memoireEditionLivrable.value = idVise;
             
             validateurLivrable.textContent = "Mettre à jour"; validateurLivrable.classList.replace('bg-blue-600', 'bg-orange-500'); validateurLivrable.classList.replace('hover:bg-blue-700', 'hover:bg-orange-600');
-            annulateurLivrable.classList.remove('hidden'); document.getElementById('task-form-title').textContent = "Modifier le livrable"; window.scrollTo({ top: 0, behavior: 'smooth' });
+            annulateurLivrable.classList.remove('hidden'); document.getElementById('task-form-title').textContent = "Modifier la tâche"; window.scrollTo({ top: 0, behavior: 'smooth' });
         };
         
         function viderChampsSaisieLivrable() {
@@ -1352,7 +1354,7 @@
             const cb = document.getElementById('disable-encadrement'); if(cb) cb.checked = false;
             initialiserDatesLivrable();
             if(validateurLivrable) { validateurLivrable.textContent = "Ajouter"; validateurLivrable.classList.replace('bg-orange-500', 'bg-blue-600'); validateurLivrable.classList.replace('hover:bg-orange-600', 'hover:bg-blue-700'); }
-            if(annulateurLivrable) annulateurLivrable.classList.add('hidden'); const baliseTitre = document.getElementById('task-form-title'); if(baliseTitre) baliseTitre.textContent = "Ajouter un livrable";
+            if(annulateurLivrable) annulateurLivrable.classList.add('hidden'); const baliseTitre = document.getElementById('task-form-title'); if(baliseTitre) baliseTitre.textContent = "Ajouter une tâche";
         }
         
         if(annulateurLivrable) annulateurLivrable.addEventListener('click', viderChampsSaisieLivrable);
@@ -2166,7 +2168,7 @@
         const formatExcelNum = (num) => (num === null || isNaN(num)) ? '' : num.toFixed(2).replace('.', ',');
 
         window.exporterPointagesExcel = function() {
-            let csv = "Date de debut;Date de fin;Membre;Nom du livrable;Heures;Commentaire\n";
+            let csv = "Date de debut;Date de fin;Membre;Nom de la tâche;Heures;Commentaire\n";
             const ptExport = obtenirPointagesRepartis();
             
             // Fonction pour formater les dates en JJ/MM/AAAA
@@ -2217,10 +2219,10 @@
             telechargerFichierCSV(csv, "Indicateurs_Bruts.csv");
         };
 
-        window.exporterADIExcel = function() {
-            if (listeLivrables.length === 0) return alert("Aucun livrable à exporter.");
+        window.exporterTachesExcel = function() {
+            if (listeLivrables.length === 0) return alert("Aucune tâche à exporter.");
             
-            let csv = "Categorie 1;Categorie 2;Nom du livrable;Date de debut;Date de fin;Heures prevues;Statut;Avancement manuel (%);Mode avancement;Encadrement desactive\n";
+            let csv = "Categorie 1;Categorie 2;Nom de la tâche;Date de debut;Date de fin;Heures prevues;Statut;Avancement manuel (%);Mode avancement;Encadrement desactive\n";
             
             listeLivrables.forEach(t => { 
                 const cat1 = (t.wp || '').replace(/;/g, ',');
@@ -2237,7 +2239,7 @@
                 csv += `${cat1};${cat2};${nom};${debut};${fin};${heures};${statut};${prog};${mode};${disableEnc}\n`; 
             });
             
-            telechargerFichierCSV(csv, "Livrables_ADI.csv");
+            telechargerFichierCSV(csv, "Taches_Projet.csv");
         };
 
         // --- DEMARRAGE ---

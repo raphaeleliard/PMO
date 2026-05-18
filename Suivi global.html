@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suivi des ADI</title>
+    <title>Suivi de Projets</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232563eb' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z'/></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -69,7 +69,9 @@
         <header class="mb-6 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
             <div class="w-full md:w-2/3 flex items-center gap-4">
                 <div class="w-16 h-16 shrink-0 bg-white border border-slate-200 rounded-xl flex items-center justify-center overflow-hidden shadow-sm">
-                    <img src="#" alt="Logo" class="w-full h-full object-contain p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
                 </div>
                 <div class="flex-1">
                     <input type="text" id="project-name" placeholder="Saisir le nom du projet..." 
@@ -96,7 +98,7 @@
         </header>
 
         <nav class="flex gap-2 mb-8 border-b border-slate-200 pb-px overflow-x-auto">
-            <button id="tab-btn-projet" class="whitespace-nowrap px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors bg-white text-blue-600 border border-slate-200 border-b-white -mb-px">ADI</button>
+            <button id="tab-btn-projet" class="whitespace-nowrap px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors bg-white text-blue-600 border border-slate-200 border-b-white -mb-px">Tâches</button>
             <button id="tab-btn-pointage" class="whitespace-nowrap px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-transparent">Pointage Hebdo</button>
             <button id="tab-btn-charge" class="whitespace-nowrap px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-transparent">Plan de charge</button>
             <button id="tab-btn-indicateurs" class="whitespace-nowrap px-5 py-2.5 text-sm font-medium rounded-t-lg transition-colors text-slate-500 hover:text-slate-700 hover:bg-slate-100 border border-transparent">Indicateurs</button>
@@ -106,19 +108,23 @@
         <div id="view-projet" class="block max-w-6xl">
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8">
                 <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
-                    <h2 class="text-lg font-semibold text-slate-700" id="task-form-title">Ajouter un livrable</h2>
+                    <h2 class="text-lg font-semibold text-slate-700" id="task-form-title">Ajouter une tâche</h2>
                     
                     <div class="flex items-center gap-4 flex-wrap w-full sm:w-auto">
-                        <button onclick="exporterADIExcel()" title="Exporter la liste des livrables (CSV)" class="bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1.5 rounded text-sm font-medium transition border border-blue-200 flex items-center gap-2 shadow-sm">
+                        <button onclick="exporterTachesExcel()" title="Exporter la liste des tâches (CSV)" class="bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-1.5 rounded text-sm font-medium transition border border-blue-200 flex items-center gap-2 shadow-sm">
                             <span>📤 Exporter Excel</span>
                         </button>
                         <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded border border-slate-200">
-                            <label class="text-sm font-medium text-slate-600" title="Ce % s'appliquera à titre indicatif sur les heures des tâches">Taux d'encadrement (%) :</label>
+                            <label class="text-sm font-medium text-slate-600" title="Ce % s'appliquera à titre indicatif sur les heures des tâches">Taux d'encadrement (%) (optionnel) :</label>
                             <input type="number" id="project-encadrement" min="0" max="100" step="0.5" placeholder="Ex: 5" class="w-16 px-1 py-0.5 text-center border border-slate-300 rounded outline-none text-sm focus:border-blue-500">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded border border-slate-200">
+                            <label class="text-sm font-medium text-slate-600" title="Capacité mensuelle type (heures par personne)">Capacité (h/pers) :</label>
+                            <input type="number" id="project-capacity" min="1" step="1" placeholder="139" class="w-16 px-1 py-0.5 text-center border border-slate-300 rounded outline-none text-sm focus:border-blue-500">
                         </div>
                         <label title="Importer depuis Excel" class="bg-emerald-100 hover:bg-emerald-200 text-emerald-800 px-3 py-1.5 rounded text-sm font-medium transition border border-emerald-200 flex items-center gap-2 cursor-pointer shadow-sm">
                             <span>📥 Importer Excel</span>
-                            <input type="file" id="import-excel-adi" class="hidden" accept=".xlsx, .xls, .csv" onchange="traiterUploadExcel(event, 'ADI')">
+                            <input type="file" id="import-excel-taches" class="hidden" accept=".xlsx, .xls, .csv" onchange="traiterUploadExcel(event, 'TACHES')">
                         </label>
                     </div>
                 </div>
@@ -127,15 +133,15 @@
                     <input type="hidden" id="edit-task-id" value="">
                     
                     <div class="w-full sm:w-32">
-                        <label class="block text-sm font-medium text-slate-600 mb-1" for="wp">Catégorie</label>
-                        <input type="text" id="wp" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition text-sm">
+                        <label class="block text-sm font-medium text-slate-600 mb-1" for="cat1">Catégorie</label>
+                        <input type="text" id="cat1" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition text-sm">
                     </div>
                     <div class="w-full sm:w-32">
-                        <label class="block text-sm font-medium text-slate-600 mb-1" for="wp2" title="Optionnelle">Catégorie 2</label>
-                        <input type="text" id="wp2" placeholder="Optionnelle" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition text-sm">
+                        <label class="block text-sm font-medium text-slate-600 mb-1" for="cat2" title="Optionnelle">Catégorie 2</label>
+                        <input type="text" id="cat2" placeholder="Optionnelle" class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition text-sm">
                     </div>
                     <div class="w-full sm:flex-1 sm:min-w-[150px]">
-                        <label class="block text-sm font-medium text-slate-600 mb-1" for="name">Nom du livrable</label>
+                        <label class="block text-sm font-medium text-slate-600 mb-1" for="name">Nom de la tâche</label>
                         <input type="text" id="name" required class="w-full px-3 py-2 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition text-sm">
                     </div>
                     <div class="w-full sm:w-32">
@@ -157,18 +163,18 @@
                     
                     <div class="w-full flex items-center gap-2 mt-1">
                         <input type="checkbox" id="disable-encadrement" class="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500">
-                        <label for="disable-encadrement" class="text-sm font-medium text-slate-500 cursor-pointer">Désactiver le calcul d'encadrement indicatif pour ce livrable spécifique</label>
+                        <label for="disable-encadrement" class="text-sm font-medium text-slate-500 cursor-pointer">Désactiver le calcul d'encadrement indicatif pour cette tâche spécifique</label>
                     </div>
                 </form>
 
                 <div class="flex flex-wrap gap-4 mb-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
                         <label class="text-sm font-semibold text-slate-600">Filtrer par Catégorie 1 :</label>
-                        <select id="adi-wp-filter" onchange="afficherLivrables()" class="w-full sm:w-auto px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-white shadow-sm text-sm font-medium text-slate-700 min-w-[150px]"></select>
+                        <select id="projet-cat1-filter" onchange="afficherLivrables()" class="w-full sm:w-auto px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-white shadow-sm text-sm font-medium text-slate-700 min-w-[150px]"></select>
                     </div>
                     <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
                         <label class="text-sm font-semibold text-slate-600">Filtrer par Catégorie 2 :</label>
-                        <select id="adi-wp2-filter" onchange="afficherLivrables()" class="w-full sm:w-auto px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-white shadow-sm text-sm font-medium text-slate-700 min-w-[150px]"></select>
+                        <select id="projet-cat2-filter" onchange="afficherLivrables()" class="w-full sm:w-auto px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-white shadow-sm text-sm font-medium text-slate-700 min-w-[150px]"></select>
                     </div>
                 </div>
 
@@ -178,7 +184,7 @@
                             <tr class="bg-slate-50 border-b border-slate-200 text-sm text-slate-600 uppercase tracking-wider">
                                 <th class="px-4 py-3 font-medium">Catégorie</th>
                                 <th class="px-4 py-3 font-medium">Catégorie 2</th>
-                                <th class="px-4 py-3 font-medium">Livrable</th>
+                                <th class="px-4 py-3 font-medium">Tâche</th>
                                 <th class="px-4 py-3 font-medium whitespace-nowrap">Dates</th>
                                 <th class="px-4 py-3 font-medium text-right">Heures</th>
                                 <th class="px-4 py-3 font-medium w-64">Avancement</th>
@@ -211,8 +217,8 @@
         <div id="view-pointage" class="hidden max-w-5xl">
             
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-4">
-                <h2 class="text-lg font-semibold mb-2 text-slate-700">Code EOTP / Informations générales</h2>
-                <textarea id="project-eotp" rows="2" placeholder="Exemple : Code EOTP : 12345-ABC&#10;Informations de facturation..." class="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition text-sm text-slate-700"></textarea>
+                <h2 class="text-lg font-semibold mb-2 text-slate-700">Zone de commentaire libre / Informations générales</h2>
+                <textarea id="project-eotp" rows="2" placeholder="Exemple : Informations de facturation, liens utiles..." class="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 transition text-sm text-slate-700"></textarea>
             </div>
 
             <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-100 mb-8">
@@ -224,7 +230,7 @@
                         <select id="entry-member" required class="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none bg-white"></select>
                     </div>
                     <div class="w-full sm:flex-[2] sm:min-w-[200px]">
-                        <label class="block text-sm font-medium text-slate-600 mb-1" for="entry-task">Livrable concerné</label>
+                        <label class="block text-sm font-medium text-slate-600 mb-1" for="entry-task">Tâche concernée</label>
                         <select id="entry-task" required class="w-full px-4 py-2 border border-slate-200 rounded-lg outline-none bg-white"></select>
                     </div>
                     <div class="w-full sm:w-36">
@@ -264,7 +270,7 @@
                         <tr class="bg-slate-50 border-b border-slate-200 text-sm text-slate-600 uppercase tracking-wider">
                             <th class="px-6 py-3 font-medium">Semaine</th>
                             <th class="px-6 py-3 font-medium">Membre</th>
-                            <th class="px-6 py-3 font-medium whitespace-normal">Livrable</th>
+                                <th class="px-6 py-3 font-medium whitespace-normal">Tâche</th>
                             <th class="px-6 py-3 font-medium text-right">Heures</th>
                             <th class="px-6 py-3 font-medium whitespace-normal">Commentaire</th>
                             <th class="px-6 py-3 font-medium text-center">Actions</th>
@@ -280,18 +286,18 @@
                 <div class="flex flex-wrap gap-4 mb-4 pb-4 border-b border-slate-200">
                     <div class="w-full sm:flex-1 sm:min-w-[150px]">
                         <label class="block text-sm font-semibold text-slate-600 mb-1">Catégorie 1</label>
-                        <select id="charge-wp-filter" onchange="afficherPlanDeCharge()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-slate-50 shadow-sm text-sm font-medium text-slate-700"></select>
+                        <select id="charge-cat1-filter" onchange="afficherPlanDeCharge()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-slate-50 shadow-sm text-sm font-medium text-slate-700"></select>
                     </div>
                     <div class="w-full sm:flex-1 sm:min-w-[150px]">
                         <label class="block text-sm font-semibold text-slate-600 mb-1">Catégorie 2</label>
-                        <select id="charge-wp2-filter" onchange="afficherPlanDeCharge()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-slate-50 shadow-sm text-sm font-medium text-slate-700"></select>
+                        <select id="charge-cat2-filter" onchange="afficherPlanDeCharge()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-slate-50 shadow-sm text-sm font-medium text-slate-700"></select>
                     </div>
                     <div class="w-full sm:flex-1 sm:min-w-[150px]">
                         <label class="block text-sm font-semibold text-slate-600 mb-1">Équipe</label>
                         <select id="charge-member-filter" onchange="afficherPlanDeCharge()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-slate-50 shadow-sm text-sm font-medium text-slate-700"></select>
                     </div>
                     <div class="w-full sm:flex-1 sm:min-w-[150px]">
-                        <label class="block text-sm font-semibold text-slate-600 mb-1">Livrable</label>
+                        <label class="block text-sm font-semibold text-slate-600 mb-1">Tâche</label>
                         <select id="charge-task-filter" onchange="afficherPlanDeCharge()" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none bg-slate-50 shadow-sm text-sm font-medium text-slate-700"></select>
                     </div>
                 </div>
@@ -316,7 +322,7 @@
                             <span>📊 Excel</span>
                         </button>
                         <select id="indicator-filter" onchange="afficherTableauIndicateurs()" class="w-full sm:w-auto px-3 py-2 border border-slate-300 rounded-lg outline-none bg-white sm:min-w-[150px] shadow-sm font-medium text-slate-700"></select>
-                        <select id="indicator-filter-wp2" onchange="afficherTableauIndicateurs()" class="w-full sm:w-auto px-3 py-2 border border-slate-300 rounded-lg outline-none bg-white sm:min-w-[150px] shadow-sm font-medium text-slate-700"></select>
+                        <select id="indicator-filter-cat2" onchange="afficherTableauIndicateurs()" class="w-full sm:w-auto px-3 py-2 border border-slate-300 rounded-lg outline-none bg-white sm:min-w-[150px] shadow-sm font-medium text-slate-700"></select>
                         <select id="indicator-member-filter" onchange="afficherTableauIndicateurs()" class="w-full sm:w-auto px-3 py-2 border border-slate-300 rounded-lg outline-none bg-white sm:min-w-[150px] shadow-sm font-medium text-slate-700"></select>
                     </div>
                 </div>
@@ -324,7 +330,7 @@
                     <table class="w-full text-left border-collapse whitespace-nowrap">
                         <thead>
                             <tr class="bg-slate-100 border-b border-slate-200 text-xs text-slate-600 uppercase tracking-wider">
-                                <th class="px-4 py-3 font-semibold">Tâche / Livrable</th>
+                                <th class="px-4 py-3 font-semibold">Tâche</th>
                                 <th class="px-4 py-3 font-semibold w-32" title="Valeur Planifiée : Budget censé être dépensé à cette date.">Prévu (PV)</th>
                                 <th class="px-4 py-3 font-semibold w-32" title="Coût Réel : Total des heures pointées.">Consommé (AC)</th>
                                 <th class="px-4 py-3 font-semibold w-32" title="Valeur Acquise : Budget initial × Avancement physique (%).">Réel (EV)</th>
@@ -349,22 +355,22 @@
                             <label class="text-sm font-semibold text-slate-600" for="chart-date-filter">À la date du :</label>
                             <input type="date" id="chart-date-filter" onchange="afficherTousLesGraphiques()" class="outline-none text-sm font-medium text-slate-700 bg-transparent cursor-pointer">
                         </div>
-                        <select id="chart-wp-filter" onchange="mettreAJourFiltreTachePourGraphiques(); afficherTousLesGraphiques();" class="w-full sm:w-auto px-3 py-2 border border-slate-300 rounded-lg outline-none bg-white sm:min-w-[150px] shadow-sm font-medium text-slate-700"></select>
-                        <select id="chart-wp2-filter" onchange="mettreAJourFiltreTachePourGraphiques(); afficherTousLesGraphiques();" class="w-full sm:w-auto px-3 py-2 border border-slate-300 rounded-lg outline-none bg-white sm:min-w-[150px] shadow-sm font-medium text-slate-700"></select>
+                        <select id="chart-cat1-filter" onchange="mettreAJourFiltreTachePourGraphiques(); afficherTousLesGraphiques();" class="w-full sm:w-auto px-3 py-2 border border-slate-300 rounded-lg outline-none bg-white sm:min-w-[150px] shadow-sm font-medium text-slate-700"></select>
+                        <select id="chart-cat2-filter" onchange="mettreAJourFiltreTachePourGraphiques(); afficherTousLesGraphiques();" class="w-full sm:w-auto px-3 py-2 border border-slate-300 rounded-lg outline-none bg-white sm:min-w-[150px] shadow-sm font-medium text-slate-700"></select>
                     </div>
                 </div>
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col items-center">
                         <h3 class="text-sm font-semibold text-slate-700 mb-2">Consommation des heures</h3>
-                        <div class="relative h-56 w-full"><canvas id="chart-wp-pie"></canvas></div>
+                        <div class="relative h-56 w-full"><canvas id="chart-cat1-pie"></canvas></div>
                     </div>
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
                         <h3 class="text-sm font-semibold text-slate-700 mb-2">Heures par Mois (Prévu vs Réel)</h3>
-                        <div class="relative h-56 w-full"><canvas id="chart-wp-line-month"></canvas></div>
+                        <div class="relative h-56 w-full"><canvas id="chart-cat1-line-month"></canvas></div>
                     </div>
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
                         <h3 class="text-sm font-semibold text-slate-700 mb-2">Cumul des Heures (Courbe en S)</h3>
-                        <div class="relative h-56 w-full"><canvas id="chart-wp-line-cumul"></canvas></div>
+                        <div class="relative h-56 w-full"><canvas id="chart-cat1-line-cumul"></canvas></div>
                     </div>
                 </div>
             </div>
@@ -519,7 +525,11 @@
             
             proj.tasks.forEach(t => { 
                 if (!t.id) t.id = genererIDUnique(); 
-                if (t.wp2 === undefined) t.wp2 = ""; 
+                // Migration wp -> cat1 et wp2 -> cat2
+                if (t.wp !== undefined) { t.cat1 = t.wp; delete t.wp; }
+                if (t.wp2 !== undefined) { t.cat2 = t.wp2; delete t.wp2; }
+                if (t.cat1 === undefined) t.cat1 = "Général";
+                if (t.cat2 === undefined) t.cat2 = ""; 
                 if (t.disableEncadrement === undefined) t.disableEncadrement = false;
                 t.hours = parseFloat(String(t.hours).replace(',', '.')) || 0; 
                 t.manualProgress = parseFloat(String(t.manualProgress).replace(',', '.')) || 0;
@@ -547,17 +557,17 @@
                     if (cleanTask.includes("heures non-attribuées")) p.taskId = ID_HEURES_NON_ATTRIBUEES;
                     else if (cleanTask.includes("uniform_distribution") || cleanTask.includes("répartition uniforme")) p.taskId = ID_REPARTITION_UNIFORME;
                     else {
-                        const foundT = proj.tasks.find(tk => `${String(tk.wp).trim()} - ${String(tk.name).trim()}`.toLowerCase() === cleanTask);
+                        const foundT = proj.tasks.find(tk => `${String(tk.cat1).trim()} - ${String(tk.name).trim()}`.toLowerCase() === cleanTask);
                         if (foundT) {
                             p.taskId = foundT.id;
                         } else {
                             const newIdT = genererIDUnique();
-                            let wp = "Orphelin"; let nom = String(p.task).trim();
+                            let cat1 = "Orphelin"; let nom = String(p.task).trim();
                             if (nom.includes(" - ")) {
                                 const pts = nom.split(" - ");
-                                wp = pts[0].trim(); nom = pts.slice(1).join(" - ").trim();
+                                cat1 = pts[0].trim(); nom = pts.slice(1).join(" - ").trim();
                             }
-                            proj.tasks.push({ id: newIdT, wp: wp, wp2: "", name: nom, start: '', end: '', hours: 0, status: "Non lancé", progressMode: "statut", manualProgress: 0, disableEncadrement: false });
+                            proj.tasks.push({ id: newIdT, cat1: cat1, cat2: "", name: nom, start: '', end: '', hours: 0, status: "Non lancé", progressMode: "statut", manualProgress: 0, disableEncadrement: false });
                             p.taskId = newIdT;
                         }
                     }
@@ -606,7 +616,7 @@
         }
 
         function creerNouveauProjetVierge(nomProjet) {
-            return { id: genererIDUnique(), projectData: { name: nomProjet, start: '', end: '', encadrement: 0, eotp: '' }, team: [], tasks: [], timeEntries: [] };
+            return { id: genererIDUnique(), projectData: { name: nomProjet, start: '', end: '', encadrement: 0, eotp: '', capacite: 139 }, team: [], tasks: [], timeEntries: [] };
         }
 
         function sauvegarderDansLeNavigateur() {
@@ -699,7 +709,7 @@
                 const isGlobal = idProjetActuel === 'GLOBAL';
                 
                 if (isGlobal) {
-                    donneesProjet = { name: "🌍 Vue Globale (Tous les projets)", start: "", end: "", encadrement: 0, eotp: "Vue consolidée du portefeuille de projets." };
+                    donneesProjet = { name: "🌍 Vue Globale (Tous les projets)", start: "", end: "", encadrement: 0, eotp: "Vue consolidée du portefeuille de projets.", capacite: 139 };
                     let minDate = null, maxDate = null;
                     let mergedTeam = [], memberIdMap = {}, mergedTasks = [], mergedEntries = [];
 
@@ -719,7 +729,7 @@
                         const projTasks = proj.tasks || [];
                         projTasks.forEach(t => {
                             if (!t) return;
-                            mergedTasks.push({ ...t, wp: `[${projName}] ${t.wp || 'Sans cat'}` });
+                            mergedTasks.push({ ...t, cat1: `[${projName}] ${t.cat1 || 'Sans cat'}` });
                         });
 
                         (proj.timeEntries || []).forEach(pointage => {
@@ -731,7 +741,7 @@
                                 let cibles = projTasks.filter(t => t);
                                 if (estRepartCat) {
                                     const catCible = pointage.taskId.replace("REP_CAT_", "");
-                                    cibles = cibles.filter(t => t.wp === catCible);
+                                    cibles = cibles.filter(t => t.cat1 === catCible);
                                 }
                                 if (cibles.length === 0) return;
 
@@ -760,7 +770,7 @@
                     const projetActif = listeProjets.find(p => p.id === idProjetActuel);
                     if(!projetActif) return;
                     
-                    donneesProjet = projetActif.projectData || {name: '', start: '', end: '', encadrement: 0, eotp: ''}; 
+                    donneesProjet = projetActif.projectData || {name: '', start: '', end: '', encadrement: 0, eotp: '', capacite: 139}; 
                     if (!donneesProjet.niveauxAvancement) {
                         donneesProjet.niveauxAvancement = { "Non lancé": 0, "Cadrage": 0, "DB": 10, "Etude": 25, "Rédaction": 55, "Relecture": 80, "Validation": 90, "Déposée": 100 };
                     }
@@ -775,12 +785,14 @@
                 const inputFin = document.getElementById('project-end');
                 const inputEncadrement = document.getElementById('project-encadrement');
                 const inputEotp = document.getElementById('project-eotp');
+                const inputCapacity = document.getElementById('project-capacity');
                 
                 if(inputNom) { inputNom.value = donneesProjet.name || ''; inputNom.disabled = isGlobal; }
                 if(inputDebut) { inputDebut.value = donneesProjet.start || ''; inputDebut.disabled = isGlobal; }
                 if(inputFin) { inputFin.value = donneesProjet.end || ''; inputFin.disabled = isGlobal; }
                 if(inputEncadrement) { inputEncadrement.value = donneesProjet.encadrement || 0; inputEncadrement.disabled = isGlobal; }
                 if(inputEotp) { inputEotp.value = donneesProjet.eotp || ''; inputEotp.disabled = isGlobal; }
+                if(inputCapacity) { inputCapacity.value = donneesProjet.capacite || 139; inputCapacity.disabled = isGlobal; }
 
                 // Gestion de l'affichage des formulaires en mode Global (Lecture seule)
                 const toggleVis = (id, show) => { const el = document.getElementById(id); if(el) el.style.display = show ? '' : 'none'; };
@@ -788,7 +800,7 @@
                 toggleVis('team-form', !isGlobal);
                 toggleVis('time-entry-form', !isGlobal);
                 
-                const btnImportAdi = document.getElementById('import-excel-adi');
+                const btnImportAdi = document.getElementById('import-excel-taches');
                 if (btnImportAdi && btnImportAdi.parentElement) btnImportAdi.parentElement.style.display = isGlobal ? 'none' : '';
                 const btnImportPointage = document.getElementById('import-excel-pointage');
                 if (btnImportPointage && btnImportPointage.parentElement) btnImportPointage.parentElement.style.display = isGlobal ? 'none' : '';
@@ -810,6 +822,7 @@
         const inputFinProjet = document.getElementById('project-end'); if(inputFinProjet) inputFinProjet.addEventListener('change', (e) => { donneesProjet.end = e.target.value; signalerModification(); initialiserDatesLivrable(); afficherTableauIndicateurs(); afficherTousLesGraphiques(); afficherPlanDeCharge(); });
         const inputEncadrementProjet = document.getElementById('project-encadrement'); if(inputEncadrementProjet) inputEncadrementProjet.addEventListener('input', (e) => { donneesProjet.encadrement = parseFloat(e.target.value) || 0; signalerModification(); afficherLivrables(); });
         const inputEotpProjet = document.getElementById('project-eotp'); if(inputEotpProjet) inputEotpProjet.addEventListener('input', (e) => { donneesProjet.eotp = e.target.value; signalerModification(); });
+        const inputCapacityProjet = document.getElementById('project-capacity'); if(inputCapacityProjet) inputCapacityProjet.addEventListener('input', (e) => { donneesProjet.capacite = parseFloat(e.target.value) || 139; signalerModification(); afficherTousLesGraphiques(); });
 
         function changerOngletVue(nomOngletCible) {
             const nomDesOnglets = ['projet', 'pointage', 'charge', 'indicateurs', 'graphiques'];
@@ -918,19 +931,19 @@
             const domMembrePointage = document.getElementById('entry-member'); 
             const domTachePointage = document.getElementById('entry-task');
             
-            const domAdiwP = document.getElementById('adi-wp-filter');
-            const domAdiwP2 = document.getElementById('adi-wp2-filter');
+            const domAdiwP = document.getElementById('projet-cat1-filter');
+            const domAdiwP2 = document.getElementById('projet-cat2-filter');
 
-            const domChargeWp = document.getElementById('charge-wp-filter');
-            const domChargeWp2 = document.getElementById('charge-wp2-filter');
+            const domChargeWp = document.getElementById('charge-cat1-filter');
+            const domChargeWp2 = document.getElementById('charge-cat2-filter');
             const domFiltreChargeMembre = document.getElementById('charge-member-filter'); 
             const domFiltreChargeTache = document.getElementById('charge-task-filter');
             
             const domFiltreIndicateurs = document.getElementById('indicator-filter'); 
-            const domIndicatorWp2 = document.getElementById('indicator-filter-wp2');
+            const domIndicatorWp2 = document.getElementById('indicator-filter-cat2');
             
-            const domFiltreGraphiqueCat = document.getElementById('chart-wp-filter');
-            const domChartWp2 = document.getElementById('chart-wp2-filter');
+            const domFiltreGraphiqueCat = document.getElementById('chart-cat1-filter');
+            const domChartWp2 = document.getElementById('chart-cat2-filter');
             
             const domIndicatorMember = document.getElementById('indicator-member-filter');
 
@@ -970,7 +983,7 @@
                     htmlOptionsTaches += `<option value="${ID_REPARTITION_UNIFORME}">🔄 Rép. prop. (Toutes les tâches)</option>`;
                     
                     // NOUVEAU : Ajout dynamique des répartitions par Catégorie 1
-                    const listeCatUniques = [...new Set(listeLivrables.map(t => t ? t.wp : ''))].filter(x => x);
+                    const listeCatUniques = [...new Set(listeLivrables.map(t => t ? t.cat1 : ''))].filter(x => x);
                     listeCatUniques.forEach(cat => {
                         htmlOptionsTaches += `<option value="REP_CAT_${cat}">🔄 Rép. prop. dans : ${cat}</option>`;
                     });
@@ -982,8 +995,8 @@
                 
                 listeLivrables.forEach(t => { 
                     if(!t) return;
-                    const cat2 = t.wp2 ? ` > ${t.wp2}` : '';
-                    const optT = document.createElement('option'); optT.value = t.id; optT.textContent = `${t.wp || ''}${cat2} - ${t.name || ''}`;
+                    const strCat2 = t.cat2 ? ` > ${t.cat2}` : '';
+                    const optT = document.createElement('option'); optT.value = t.id; optT.textContent = `${t.cat1 || ''}${strCat2} - ${t.name || ''}`;
                     htmlOptionsTaches += optT.outerHTML; htmlOptionsTachesCharge += optT.outerHTML;
                 });
                 if(domTachePointage) domTachePointage.innerHTML = htmlOptionsTaches; 
@@ -991,14 +1004,14 @@
             }
 
             // Filtres de Catégories (1 et 2)
-            const listeCategoriesUniques = [...new Set(listeLivrables.map(t => t ? t.wp : ''))].filter(x => x);
+            const listeCategoriesUniques = [...new Set(listeLivrables.map(t => t ? t.cat1 : ''))].filter(x => x);
             let htmlOptionsCategories = '<option value="">TOUTES CATÉGORIES 1</option>';
             listeCategoriesUniques.forEach(categorie => { 
                 const optC = document.createElement('option'); optC.value = categorie; optC.textContent = `Cat 1 : ${categorie}`;
                 htmlOptionsCategories += optC.outerHTML; 
             });
 
-            const listeCat2Uniques = [...new Set(listeLivrables.map(t => t ? t.wp2 : ''))].filter(x => x);
+            const listeCat2Uniques = [...new Set(listeLivrables.map(t => t ? t.cat2 : ''))].filter(x => x);
             let htmlOptionsCat2 = '<option value="">TOUTES CATÉGORIES 2</option>';
             listeCat2Uniques.forEach(cat2 => { 
                 const optC2 = document.createElement('option'); optC2.value = cat2; optC2.textContent = `Cat 2 : ${cat2}`;
@@ -1044,7 +1057,7 @@
                     
                     if (estRepartCat) {
                         const catCible = pointage.taskId.replace("REP_CAT_", "");
-                        cibles = cibles.filter(t => t.wp === catCible);
+                        cibles = cibles.filter(t => t.cat1 === catCible);
                     }
                     
                     if (cibles.length === 0) return;
@@ -1102,8 +1115,8 @@
             
             const t = listeLivrables.find(t => t.id === id); 
             if (!t) return "Tâche inconnue/supprimée";
-            const cat2 = t.wp2 ? ` > ${t.wp2}` : '';
-            return `${t.wp}${cat2} - ${t.name}`; 
+            const strCat2 = t.cat2 ? ` > ${t.cat2}` : '';
+            return `${t.cat1}${strCat2} - ${t.name}`; 
         }
 
         let fichierExcelEnAttente = null;
@@ -1141,11 +1154,11 @@
             conteneurChamps.innerHTML = '';
 
             let champsRequis = [];
-            if (contexteImportActuel === 'ADI') {
+            if (contexteImportActuel === 'TACHES') {
                 champsRequis = [
-                    { id: 'col_wp', label: 'Catégorie 1 (Obligatoire)', motsCles: ['catégorie', 'categorie', 'wp', 'projet'] },
-                    { id: 'col_wp2', label: 'Catégorie 2 (Optionnelle)', motsCles: ['catégorie 2', 'sous-catégorie', 'lot', 'sous-projet'] },
-                    { id: 'col_name', label: 'Nom du Livrable / Tâche', motsCles: ['livrable', 'nom', 'tâche', 'tache'] },
+                    { id: 'col_cat1', label: 'Catégorie 1 (Obligatoire)', motsCles: ['catégorie', 'categorie', 'wp', 'projet'] },
+                    { id: 'col_cat2', label: 'Catégorie 2 (Optionnelle)', motsCles: ['catégorie 2', 'sous-catégorie', 'lot', 'sous-projet'] },
+                    { id: 'col_name', label: 'Nom de la Tâche', motsCles: ['livrable', 'nom', 'tâche', 'tache'] },
                     { id: 'col_start', label: 'Date de Début', motsCles: ['début', 'debut', 'start'] },
                     { id: 'col_end', label: 'Date de Fin', motsCles: ['fin', 'end'] },
                     { id: 'col_hours', label: 'Heures Prévues (Budget)', motsCles: ['heures', 'budget', 'h'] }
@@ -1153,8 +1166,8 @@
             } else if (contexteImportActuel === 'POINTAGE') {
                 champsRequis = [
                     { id: 'col_member', label: 'Membre de l\'équipe', motsCles: ['membre', 'nom', 'personne'] },
-                    { id: 'col_cat', label: 'Catégorie (Optionnel)', motsCles: ['catégorie', 'categorie', 'wp'] },
-                    { id: 'col_task', label: 'Livrable / Tâche ciblée', motsCles: ['livrable', 'tâche', 'tache'] },
+                    { id: 'col_cat', label: 'Catégorie (Optionnel)', motsCles: ['catégorie', 'categorie', 'cat'] },
+                    { id: 'col_task', label: 'Tâche ciblée', motsCles: ['livrable', 'tâche', 'tache'] },
                     { id: 'col_week', label: 'Date ou Semaine', motsCles: ['semaine', 'week', 'date', 'jour'] },
                     { id: 'col_hours', label: 'Heures Réalisées', motsCles: ['heures', 'temps', 'h', 'hours'] },
                     { id: 'col_comment', label: 'Commentaire (Optionnel)', motsCles: ['commentaire', 'comment', 'remarque', 'info'] }
@@ -1199,9 +1212,9 @@
 
                     let compteurAjouts = 0;
 
-                    if (contexteImportActuel === 'ADI') {
-                        const mWp = document.getElementById('map_col_wp').value;
-                        const mWp2 = document.getElementById('map_col_wp2').value;
+                    if (contexteImportActuel === 'TACHES') {
+                        const mWp = document.getElementById('map_col_cat1').value;
+                        const mWp2 = document.getElementById('map_col_cat2').value;
                         const mName = document.getElementById('map_col_name').value;
                         const mStart = document.getElementById('map_col_start').value;
                         const mEnd = document.getElementById('map_col_end').value;
@@ -1246,8 +1259,8 @@
                             if (valWp && valName && !isNaN(valHours) && valHours >= 0) {
                                 listeLivrables.push({ 
                                     id: genererIDUnique(),
-                                    wp: String(valWp).trim(), 
-                                    wp2: valWp2 ? String(valWp2).trim() : "", 
+                                    cat1: String(valWp).trim(), 
+                                    cat2: valWp2 ? String(valWp2).trim() : "", 
                                     name: String(valName).trim(), 
                                     start: formatLaDateSuperSafe(ligne[mStart]), end: formatLaDateSuperSafe(ligne[mEnd]), 
                                     hours: valHours, status: "Non lancé", progressMode: "statut", manualProgress: 0, disableEncadrement: false
@@ -1290,11 +1303,11 @@
                             let tacheCibleId = ID_HEURES_NON_ATTRIBUEES;
                             if (valCat && valTask) {
                                 const strWP = String(valCat).trim(); const strTsk = String(valTask).trim();
-                                const trouve = listeLivrables.find(t => t.wp === strWP && t.name === strTsk);
+                                const trouve = listeLivrables.find(t => t.cat1 === strWP && t.name === strTsk);
                                 if (trouve) tacheCibleId = trouve.id;
                                 else {
                                     const nouvIdTache = genererIDUnique();
-                                    listeLivrables.push({ id: nouvIdTache, wp: strWP, wp2: "", name: strTsk, start: '', end: '', hours: 0, status: "Non lancé", progressMode: "statut", manualProgress: 0, disableEncadrement: false });
+                                    listeLivrables.push({ id: nouvIdTache, cat1: strWP, cat2: "", name: strTsk, start: '', end: '', hours: 0, status: "Non lancé", progressMode: "statut", manualProgress: 0, disableEncadrement: false });
                                     tacheCibleId = nouvIdTache;
                                 }
                             } else if (valTask) {
@@ -1303,7 +1316,7 @@
                                 if (trouve) tacheCibleId = trouve.id;
                                 else {
                                     const nouvIdTache = genererIDUnique();
-                                    listeLivrables.push({ id: nouvIdTache, wp: "Import Externe", wp2: "", name: strTsk, start: '', end: '', hours: 0, status: "Non lancé", progressMode: "statut", manualProgress: 0, disableEncadrement: false });
+                                    listeLivrables.push({ id: nouvIdTache, cat1: "Import Externe", cat2: "", name: strTsk, start: '', end: '', hours: 0, status: "Non lancé", progressMode: "statut", manualProgress: 0, disableEncadrement: false });
                                     tacheCibleId = nouvIdTache;
                                 }
                             }
@@ -1382,8 +1395,12 @@
                     ? "disabled class='w-14 px-1 py-1 border border-slate-200 rounded bg-slate-100 text-center text-sm outline-none text-slate-400'" 
                     : "class='w-14 px-1 py-1 border border-slate-300 rounded text-center text-sm outline-none focus:border-blue-500'";
                 
+                const inputNomStatut = (statut === "Non lancé")
+                    ? `<span class="text-sm font-medium text-slate-700 w-24 truncate" title="${statut}">${statut}</span>`
+                    : `<input type="text" value="${statut}" class="text-sm font-medium text-slate-700 w-24 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-blue-500 outline-none truncate" onchange="modifierNomAvancement('${statut}', this.value)" title="Modifier le nom">`;
+
                 html += `<div class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-lg border border-slate-200 shadow-sm">
-                    <span class="text-sm font-medium text-slate-700 w-20 truncate" title="${statut}">${statut}</span>
+                    ${inputNomStatut}
                     <input type="number" min="0" max="100" value="${valeur}" ${attributsInput} onchange="modifierNiveauAvancement('${statut}', this.value)">
                     <span class="text-xs font-bold text-slate-400">%</span>
                 </div>`;
@@ -1423,12 +1440,12 @@
             const corpsTableau = document.getElementById('task-list'); if(!corpsTableau) return;
             const fragment = document.createDocumentFragment();
             
-            const domWp = document.getElementById('adi-wp-filter'); const valWp = domWp ? domWp.value : '';
-            const domWp2 = document.getElementById('adi-wp2-filter'); const valWp2 = domWp2 ? domWp2.value : '';
+            const domWp = document.getElementById('projet-cat1-filter'); const valWp = domWp ? domWp.value : '';
+            const domWp2 = document.getElementById('projet-cat2-filter'); const valWp2 = domWp2 ? domWp2.value : '';
             
             let livrablesAafficher = listeLivrables;
-            if (valWp !== "") { livrablesAafficher = livrablesAafficher.filter(t => t && t.wp === valWp); }
-            if (valWp2 !== "") { livrablesAafficher = livrablesAafficher.filter(t => t && t.wp2 === valWp2); }
+            if (valWp !== "") { livrablesAafficher = livrablesAafficher.filter(t => t && t.cat1 === valWp); }
+            if (valWp2 !== "") { livrablesAafficher = livrablesAafficher.filter(t => t && t.cat2 === valWp2); }
             
             livrablesAafficher.forEach(tache => {
                 if(!tache) return;
@@ -1456,8 +1473,8 @@
 
                 const tr = document.createElement('tr'); tr.className = 'hover:bg-slate-50 transition duration-150';
                 
-                const tdCat = creerElementHTML('td', 'px-4 py-3 text-slate-800 font-medium align-middle whitespace-normal break-words min-w-[80px]', tache.wp);
-                const tdCat2 = creerElementHTML('td', 'px-4 py-3 text-slate-500 text-xs align-middle whitespace-normal break-words min-w-[80px]', tache.wp2 || '-');
+                const tdCat = creerElementHTML('td', 'px-4 py-3 text-slate-800 font-medium align-middle whitespace-normal break-words min-w-[80px]', tache.cat1);
+                const tdCat2 = creerElementHTML('td', 'px-4 py-3 text-slate-500 text-xs align-middle whitespace-normal break-words min-w-[80px]', tache.cat2 || '-');
                 const tdNom = creerElementHTML('td', 'px-4 py-3 text-slate-600 align-middle whitespace-normal break-words min-w-[150px]', tache.name);
                 const tdDates = creerElementHTML('td', 'px-4 py-3 text-slate-500 text-xs align-middle leading-tight whitespace-nowrap');
                 tdDates.innerHTML = `${affichageDepart} <br> ${affichageCloture}`; 
@@ -1505,8 +1522,8 @@
         
         window.preparerEditionLivrable = function(idVise) {
             const donneeReelle = listeLivrables.find(x => x.id === idVise); if(!donneeReelle) return;
-            document.getElementById('wp').value = donneeReelle.wp; 
-            if(document.getElementById('wp2')) document.getElementById('wp2').value = donneeReelle.wp2 || ''; 
+            document.getElementById('cat1').value = donneeReelle.cat1; 
+            if(document.getElementById('cat2')) document.getElementById('cat2').value = donneeReelle.cat2 || ''; 
             document.getElementById('name').value = donneeReelle.name; 
             document.getElementById('task-start').value = donneeReelle.start || donneesProjet.start || ''; document.getElementById('task-end').value = donneeReelle.end || donneesProjet.end || '';
             document.getElementById('hours').value = donneeReelle.hours; 
@@ -1519,7 +1536,7 @@
         
         function viderChampsSaisieLivrable() {
             if(formSaisieLivrable) formSaisieLivrable.reset(); if(memoireEditionLivrable) memoireEditionLivrable.value = ""; 
-            if(document.getElementById('wp2')) document.getElementById('wp2').value = "";
+            if(document.getElementById('cat2')) document.getElementById('cat2').value = "";
             const cb = document.getElementById('disable-encadrement'); if(cb) cb.checked = false;
             initialiserDatesLivrable();
             if(validateurLivrable) { validateurLivrable.textContent = "Ajouter"; validateurLivrable.classList.replace('bg-orange-500', 'bg-blue-600'); validateurLivrable.classList.replace('hover:bg-orange-600', 'hover:bg-blue-700'); }
@@ -1530,8 +1547,8 @@
         
         if(formSaisieLivrable) formSaisieLivrable.addEventListener('submit', (interactionDom) => {
             interactionDom.preventDefault(); 
-            const texteCat = document.getElementById('wp').value.trim(); 
-            const texteCat2 = document.getElementById('wp2') ? document.getElementById('wp2').value.trim() : "";
+            const texteCat = document.getElementById('cat1').value.trim(); 
+            const texteCat2 = document.getElementById('cat2') ? document.getElementById('cat2').value.trim() : "";
             const texteTitre = document.getElementById('name').value.trim(); 
             const valDebut = document.getElementById('task-start').value; const valFin = document.getElementById('task-end').value; const qteHeures = parseFloat(document.getElementById('hours').value); 
             const modeEditionId = memoireEditionLivrable.value;
@@ -1541,8 +1558,8 @@
                 if (modeEditionId) { 
                     const ix = listeLivrables.findIndex(x => x.id === modeEditionId);
                     if(ix !== -1) { 
-                        listeLivrables[ix].wp = texteCat; 
-                        listeLivrables[ix].wp2 = texteCat2; 
+                        listeLivrables[ix].cat1 = texteCat; 
+                        listeLivrables[ix].cat2 = texteCat2; 
                         listeLivrables[ix].name = texteTitre; 
                         listeLivrables[ix].start = valDebut; 
                         listeLivrables[ix].end = valFin; 
@@ -1551,7 +1568,7 @@
                     }
                 } else { 
                     listeLivrables.push({ 
-                        id: genererIDUnique(), wp: texteCat, wp2: texteCat2, name: texteTitre, 
+                        id: genererIDUnique(), cat1: texteCat, cat2: texteCat2, name: texteTitre, 
                         start: valDebut, end: valFin, hours: qteHeures, 
                         status: "Non lancé", progressMode: "statut", manualProgress: 0, disableEncadrement: disEncadrement 
                     }); 
@@ -1628,8 +1645,8 @@
 
         window.afficherPlanDeCharge = function() {
             try {
-                const domChargeWp = document.getElementById('charge-wp-filter'); const wpFilterId = domChargeWp ? domChargeWp.value : '';
-                const domChargeWp2 = document.getElementById('charge-wp2-filter'); const wp2FilterId = domChargeWp2 ? domChargeWp2.value : '';
+                const domChargeWp = document.getElementById('charge-cat1-filter'); const wpFilterId = domChargeWp ? domChargeWp.value : '';
+                const domChargeWp2 = document.getElementById('charge-cat2-filter'); const wp2FilterId = domChargeWp2 ? domChargeWp2.value : '';
                 const elMFilter = document.getElementById('charge-member-filter'); const mFilterId = elMFilter ? elMFilter.value : ''; 
                 const elTFilter = document.getElementById('charge-task-filter'); const tFilterId = elTFilter ? elTFilter.value : '';
 
@@ -1670,8 +1687,8 @@
                 teteHTMLTab.innerHTML = dessinTeteTab;
 
                 let lotLivrablesATraiter = listeLivrables; 
-                if (wpFilterId) { lotLivrablesATraiter = lotLivrablesATraiter.filter(li => li && li.wp === wpFilterId); }
-                if (wp2FilterId) { lotLivrablesATraiter = lotLivrablesATraiter.filter(li => li && li.wp2 === wp2FilterId); }
+                if (wpFilterId) { lotLivrablesATraiter = lotLivrablesATraiter.filter(li => li && li.cat1 === wpFilterId); }
+                if (wp2FilterId) { lotLivrablesATraiter = lotLivrablesATraiter.filter(li => li && li.cat2 === wp2FilterId); }
                 if (tFilterId && tFilterId !== ID_HEURES_NON_ATTRIBUEES) { lotLivrablesATraiter = lotLivrablesATraiter.filter(li => li && li.id === tFilterId); }
                 
                 let superGrandTotal = { coutReel: 0, historiqueMois: {} }; catalogueMoisConstruits.forEach(mois => superGrandTotal.historiqueMois[mois] = { coutReel: 0 });
@@ -1699,8 +1716,8 @@
                         let agregationMoisCout = {}; catalogueMoisConstruits.forEach(m => agregationMoisCout[m] = 0); let agregationTotalTacheCout = 0;
                         for(let idP in statistiquesParMembre) { catalogueMoisConstruits.forEach(leMois => { agregationMoisCout[leMois] += statistiquesParMembre[idP][leMois]; agregationTotalTacheCout += statistiquesParMembre[idP][leMois]; }); }
 
-                        const cat2 = tacheReelle.wp2 ? ` > ${tacheReelle.wp2}` : '';
-                        let maLigneH = `<tr class="bg-slate-100 border-t border-slate-300"><td class="px-2 py-2 font-bold text-slate-800 whitespace-normal break-words text-xs sticky left-0 z-10 bg-slate-100">${sanitizerTexte(`${tacheReelle.wp}${cat2} - ${tacheReelle.name}`)}</td>`;
+                        const strCat2 = tacheReelle.cat2 ? ` > ${tacheReelle.cat2}` : '';
+                        let maLigneH = `<tr class="bg-slate-100 border-t border-slate-300"><td class="px-2 py-2 font-bold text-slate-800 whitespace-normal break-words text-xs sticky left-0 z-10 bg-slate-100">${sanitizerTexte(`${tacheReelle.cat1}${strCat2} - ${tacheReelle.name}`)}</td>`;
                         
                         let heuresPrevuesParMois = distribuerHeuresSurMois(tacheReelle.start || donneesProjet.start, tacheReelle.end || donneesProjet.end, parseFloat(tacheReelle.hours) || 0, catalogueMoisConstruits);
 
@@ -1836,8 +1853,8 @@
 
                 bAcAchevementGlobal += bAcTacheSpecifique; vPPlanifieeGlobal += vPPlanifieeTache; cRReelGlobal += cRReelTache; vAAcquiseGlobal += vAAcquiseTache;
                 
-                const cat2 = tacheX.wp2 ? ` > ${tacheX.wp2}` : '';
-                rapportDetailléDesTaches.push({ id: tacheX.id, wp: tacheX.wp, wp2: tacheX.wp2, name: `${tacheX.wp}${cat2} - ${tacheX.name}`, bac: bAcTacheSpecifique, pvHours: vPPlanifieeTache, acHours: cRReelTache, evHours: vAAcquiseTache, spi: ratioSpi, cpi: ratioCpi, eac: projectionEac, raf: qteResteAFaire });
+                const strCat2 = tacheX.cat2 ? ` > ${tacheX.cat2}` : '';
+                rapportDetailléDesTaches.push({ id: tacheX.id, cat1: tacheX.cat1, cat2: tacheX.cat2, name: `${tacheX.cat1}${strCat2} - ${tacheX.name}`, bac: bAcTacheSpecifique, pvHours: vPPlanifieeTache, acHours: cRReelTache, evHours: vAAcquiseTache, spi: ratioSpi, cpi: ratioCpi, eac: projectionEac, raf: qteResteAFaire });
             });
 
             const ptsNA = historiquePointages.filter(e => e && e.taskId === ID_HEURES_NON_ATTRIBUEES);
@@ -1845,7 +1862,7 @@
 
             if (valACNA > 0) {
                 cRReelGlobal += valACNA;
-                rapportDetailléDesTaches.push({ id: ID_HEURES_NON_ATTRIBUEES, wp: "N/A", wp2: "", name: "❓ Heures non-attribuées", bac: 0, pvHours: 0, acHours: valACNA, evHours: 0, spi: null, cpi: null, eac: valACNA, raf: 0 });
+                rapportDetailléDesTaches.push({ id: ID_HEURES_NON_ATTRIBUEES, cat1: "N/A", cat2: "", name: "❓ Heures non-attribuées", bac: 0, pvHours: 0, acHours: valACNA, evHours: 0, spi: null, cpi: null, eac: valACNA, raf: 0 });
             }
 
             return { timePercent: tauxEcoulementMajeur, gBAC: bAcAchevementGlobal, gPV: vPPlanifieeGlobal, gAC: cRReelGlobal, gEV: vAAcquiseGlobal, taskMetrics: rapportDetailléDesTaches };
@@ -1854,7 +1871,7 @@
         window.afficherTableauIndicateurs = function() {
             try {
                 const domFilterWp = document.getElementById('indicator-filter'); const valWp = domFilterWp ? domFilterWp.value : ''; 
-                const domFilterWp2 = document.getElementById('indicator-filter-wp2'); const valWp2 = domFilterWp2 ? domFilterWp2.value : ''; 
+                const domFilterWp2 = document.getElementById('indicator-filter-cat2'); const valWp2 = domFilterWp2 ? domFilterWp2.value : ''; 
                 const domFilterMember = document.getElementById('indicator-member-filter'); const valMember = domFilterMember ? domFilterMember.value : ''; 
                 
                 const machineEVM = calculerIndicateursEVM();
@@ -1867,10 +1884,10 @@
 
                 // 1. Filtrage par catégories (Strict)
                 if (valWp !== "") { 
-                    blocDeTachesFiltrees = blocDeTachesFiltrees.filter(tz => tz.wp === valWp); 
+                    blocDeTachesFiltrees = blocDeTachesFiltrees.filter(tz => tz.cat1 === valWp); 
                 }
                 if (valWp2 !== "") { 
-                    blocDeTachesFiltrees = blocDeTachesFiltrees.filter(tz => tz.wp2 === valWp2); 
+                    blocDeTachesFiltrees = blocDeTachesFiltrees.filter(tz => tz.cat2 === valWp2); 
                 }
 
                 // 2. Filtrage par membre (Strict)
@@ -1912,7 +1929,7 @@
                 function genererUnLigneEVM(donneesMates, estLaLigneMaitreTotale = false) {
                     const baliseLgn = document.createElement('tr'); 
                     if (estLaLigneMaitreTotale) baliseLgn.className = 'bg-blue-50/50 border-b-2 font-bold text-blue-900';
-                    else if (donneesMates.wp === "N/A") baliseLgn.className = 'bg-orange-50 font-medium text-orange-900 border-t border-orange-200';
+                    else if (donneesMates.cat1 === "N/A") baliseLgn.className = 'bg-orange-50 font-medium text-orange-900 border-t border-orange-200';
                     else baliseLgn.className = 'hover:bg-slate-50 font-medium text-slate-700'; 
                     
                     const bRef = donneesMates.bac || 1; 
@@ -1920,7 +1937,7 @@
                     baliseLgn.innerHTML = `
                         <td class="px-4 py-3 align-top pt-4 whitespace-normal break-words min-w-[200px]">
                             ${sanitizerTexte(donneesMates.name)} <br>
-                            <span class="text-xs font-normal ${donneesMates.wp === 'N/A' ? 'text-orange-600' : 'text-slate-400'}">Budget: ${Math.round(donneesMates.bac)}h</span>
+                            <span class="text-xs font-normal ${donneesMates.cat1 === 'N/A' ? 'text-orange-600' : 'text-slate-400'}">Budget: ${Math.round(donneesMates.bac)}h</span>
                         </td>
                         ${creerMiniBarre(donneesMates.pvHours, bRef, 'bg-slate-400', 'text-slate-800')}
                         ${creerMiniBarre(donneesMates.acHours, bRef, donneesMates.acHours<donneesMates.pvHours?'bg-emerald-500':(donneesMates.acHours>donneesMates.pvHours?'bg-rose-500':'bg-slate-400'), donneesMates.acHours<donneesMates.pvHours?'text-emerald-600':(donneesMates.acHours>donneesMates.pvHours?'text-rose-600':'text-slate-800'))}
@@ -1946,14 +1963,14 @@
         };
 
         window.mettreAJourFiltreTachePourGraphiques = function() {
-            const filtreCatGraph = document.getElementById('chart-wp-filter'); const filtreCat2Graph = document.getElementById('chart-wp2-filter'); 
+            const filtreCatGraph = document.getElementById('chart-cat1-filter'); const filtreCat2Graph = document.getElementById('chart-cat2-filter'); 
             const filtreTasGraph = document.getElementById('chart-task-filter');
             if (!filtreCatGraph || !filtreTasGraph || !filtreCat2Graph) return;
 
             const valeurDeLaCat = filtreCatGraph.value; const valeurDeLaCat2 = filtreCat2Graph.value; const valeurDeLaTachId = filtreTasGraph.value;
             let inventaireTachesPourListe = listeLivrables;
-            if (valeurDeLaCat !== "") inventaireTachesPourListe = inventaireTachesPourListe.filter(tipe => tipe && tipe.wp === valeurDeLaCat);
-            if (valeurDeLaCat2 !== "") inventaireTachesPourListe = inventaireTachesPourListe.filter(tipe => tipe && tipe.wp2 === valeurDeLaCat2);
+            if (valeurDeLaCat !== "") inventaireTachesPourListe = inventaireTachesPourListe.filter(tipe => tipe && tipe.cat1 === valeurDeLaCat);
+            if (valeurDeLaCat2 !== "") inventaireTachesPourListe = inventaireTachesPourListe.filter(tipe => tipe && tipe.cat2 === valeurDeLaCat2);
 
             let chaineDeroulant = '<option value="">-- Sélectionner une tâche --</option>';
             const onAduNonAttribue = historiquePointages.some(p => p && p.taskId === ID_HEURES_NON_ATTRIBUEES);
@@ -1961,8 +1978,8 @@
 
             inventaireTachesPourListe.forEach(tt => { 
                 if(!tt) return;
-                const cat2 = tt.wp2 ? ` > ${tt.wp2}` : '';
-                const etiquetteTexteSaf = sanitizerTexte(`${tt.wp}${cat2} - ${tt.name}`); 
+                const strCat2 = tt.cat2 ? ` > ${tt.cat2}` : '';
+                const etiquetteTexteSaf = sanitizerTexte(`${tt.cat1}${strCat2} - ${tt.name}`); 
                 chaineDeroulant += `<option value="${tt.id}">${etiquetteTexteSaf}</option>`; 
             });
 
@@ -1990,8 +2007,8 @@
                         
                         const tacheDeRef = listeLivrables.find(t => t.id === p.taskId);
                         if (!tacheDeRef) return false;
-                        if (valeursFiltres.wp && tacheDeRef.wp !== valeursFiltres.wp) return false;
-                        if (valeursFiltres.wp2 && tacheDeRef.wp2 !== valeursFiltres.wp2) return false;
+                        if (valeursFiltres.wp && tacheDeRef.cat1 !== valeursFiltres.wp) return false;
+                        if (valeursFiltres.wp2 && tacheDeRef.cat2 !== valeursFiltres.wp2) return false;
                         return true;
                     });
                 } else if (modeFiltre === 'task' && valeursFiltres) {
@@ -2019,8 +2036,8 @@
                 if (modeFiltre === 'categories') {
                     tachesFiltrees = tachesFiltrees.filter(t => {
                         if (!t) return false;
-                        if (valeursFiltres.wp && t.wp !== valeursFiltres.wp) return false;
-                        if (valeursFiltres.wp2 && t.wp2 !== valeursFiltres.wp2) return false;
+                        if (valeursFiltres.wp && t.cat1 !== valeursFiltres.wp) return false;
+                        if (valeursFiltres.wp2 && t.cat2 !== valeursFiltres.wp2) return false;
                         return true;
                     });
                 } else if (modeFiltre === 'task' && valeursFiltres) {
@@ -2156,13 +2173,14 @@
 
             const etiquettesMoisFormatees = donnees.labels.map(l => formaterEtiquetteMois(l));
 
-            const capaciteRequiseData = donnees.pv.map(val => (val > 0 ? Math.ceil(val / 139) * 139 : 0));
+            const capaciteCible = donneesProjet.capacite || 139;
+            const capaciteRequiseData = donnees.pv.map(val => (val > 0 ? Math.ceil(val / capaciteCible) * capaciteCible : 0));
 
             creerOuMettreAJourGraphique(`chart-${prefixeIdCanvas}-line-month`, 'line', {
                 labels: etiquettesMoisFormatees,
                 datasets: [
                     { 
-                        label: 'Capacité (139h/pers)', 
+                        label: `Capacité (${capaciteCible}h/pers)`, 
                         data: capaciteRequiseData, 
                         borderColor: '#8b5cf6',
                         backgroundColor: 'transparent', 
@@ -2176,7 +2194,7 @@
                             font: { size: 10, weight: 'bold' },
                             formatter: function(value) {
                                 if (!value || value <= 0) return '';
-                                return Math.round(value / 139) + ' pers.';
+                                return Math.round(value / capaciteCible) + ' pers.';
                             }
                         }
                     },
@@ -2196,8 +2214,8 @@
 
         window.afficherTousLesGraphiques = function() {
             try {
-                const domWp = document.getElementById('chart-wp-filter');
-                const domWp2 = document.getElementById('chart-wp2-filter');
+                const domWp = document.getElementById('chart-cat1-filter');
+                const domWp2 = document.getElementById('chart-cat2-filter');
                 const wVal = domWp ? domWp.value : ""; 
                 const w2Val = domWp2 ? domWp2.value : ""; 
                 
@@ -2348,7 +2366,7 @@
         const formatExcelNum = (num) => (num === null || isNaN(num)) ? '' : num.toFixed(2).replace('.', ',');
 
         window.exporterPointagesExcel = function() {
-            let csv = "Date de debut;Date de fin;Membre;Nom du livrable;Heures;Commentaire\n";
+            let csv = "Date de debut;Date de fin;Membre;Nom de la tâche;Heures;Commentaire\n";
             const ptExport = obtenirPointagesRepartis();
             
             // Fonction pour formater les dates en JJ/MM/AAAA
@@ -2367,7 +2385,15 @@
                 const nAuteur = chercherNomMembreParId(lVf.memberId).replace(/;/g, ',');
                 
                 // 3. Nom de la tâche (UNIQUEMENT le nom, sans les catégories)
-                const nomTacheSeul = chercherNomTacheParId(lVf.taskId).replace(/;/g, ',');
+                let nomTacheSeul = "Inconnu";
+                if (lVf.taskId === ID_HEURES_NON_ATTRIBUEES) nomTacheSeul = "❓ Heures non-attribuées";
+                else if (lVf.taskId === ID_REPARTITION_UNIFORME) nomTacheSeul = "🔄 Répartition uniforme";
+                else {
+                    const tObj = listeLivrables.find(t => t.id === lVf.taskId);
+                    if (tObj) nomTacheSeul = tObj.name;
+                    else nomTacheSeul = "Tâche supprimée";
+                }
+                nomTacheSeul = nomTacheSeul.replace(/;/g, ',');
 
                 // 4. Ajout de la ligne dans le fichier CSV
                 csv += `${dateDebutStr};${dateFinStr};${nAuteur};${nomTacheSeul};${formatExcelNum(lVf.hours)};${(lVf.comment || '').replace(/;/g, ',')}\n`; 
@@ -2391,14 +2417,14 @@
             telechargerFichierCSV(csv, "Indicateurs_Bruts.csv");
         };
 
-        window.exporterADIExcel = function() {
-            if (listeLivrables.length === 0) return alert("Aucun livrable à exporter.");
+        window.exporterTachesExcel = function() {
+            if (listeLivrables.length === 0) return alert("Aucune tâche à exporter.");
             
-            let csv = "Categorie 1;Categorie 2;Nom du livrable;Date de debut;Date de fin;Heures prevues;Statut;Avancement manuel (%);Mode avancement;Encadrement desactive\n";
+            let csv = "Categorie 1;Categorie 2;Nom de la tâche;Date de debut;Date de fin;Heures prevues;Statut;Avancement manuel (%);Mode avancement;Encadrement desactive\n";
             
             listeLivrables.forEach(t => { 
-                const cat1 = (t.wp || '').replace(/;/g, ',');
-                const cat2 = (t.wp2 || '').replace(/;/g, ',');
+                const cat1 = (t.cat1 || '').replace(/;/g, ',');
+                const cat2 = (t.cat2 || '').replace(/;/g, ',');
                 const nom = (t.name || '').replace(/;/g, ',');
                 const debut = t.start || '';
                 const fin = t.end || '';
@@ -2411,7 +2437,31 @@
                 csv += `${cat1};${cat2};${nom};${debut};${fin};${heures};${statut};${prog};${mode};${disableEnc}\n`; 
             });
             
-            telechargerFichierCSV(csv, "Livrables_ADI.csv");
+            telechargerFichierCSV(csv, "Taches_Projet.csv");
+        };
+
+        window.modifierNomAvancement = function(ancienNom, nouveauNom) {
+            nouveauNom = nouveauNom.trim();
+            if (!nouveauNom || nouveauNom === ancienNom || correspondanceStatutAvancement[nouveauNom] !== undefined) return;
+            
+            const nouvelleCorresp = {};
+            for (const [key, val] of Object.entries(correspondanceStatutAvancement)) {
+                if (key === ancienNom) nouvelleCorresp[nouveauNom] = val;
+                else nouvelleCorresp[key] = val;
+            }
+            correspondanceStatutAvancement = nouvelleCorresp;
+            donneesProjet.niveauxAvancement = correspondanceStatutAvancement;
+            
+            listeLivrables.forEach(t => {
+                if (t.status === ancienNom) t.status = nouveauNom;
+            });
+            
+            signalerModification();
+            afficherNiveauxAvancement();
+            afficherLivrables();
+            
+            const vueIndicateurs = document.getElementById('view-indicateurs');
+            if (vueIndicateurs && !vueIndicateurs.classList.contains('hidden')) afficherTableauIndicateurs();
         };
 
         // --- DEMARRAGE ---
